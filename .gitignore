@@ -1,0 +1,37 @@
+# ── Dependencies & build output ────────────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ── Packaged app ───────────────────────────────────────────────────────────
+*.ehpk
+
+# ── Logs ───────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# ── Secrets — never commit ─────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+new.api
+*.pem
+*.key
+
+# ── Installed agent skills (third-party content, not our code) ─────────────
+.agents/
+.claude/
+skills-lock.json
+
+# ── Editor / OS ────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp

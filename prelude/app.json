@@ -1,0 +1,20 @@
+{
+  "package_id": "com.prelude.brief",
+  "edition": "202601",
+  "name": "Prelude",
+  "version": "0.1.0",
+  "min_sdk_version": "0.0.16",
+  "entrypoint": "index.html",
+  "permissions": [
+    {
+      "name": "network",
+      "desc": "Fetches your meeting briefs and sends the action you confirm, through the Prelude backend.",
+      "whitelist": ["https://prelude-brief.fly.dev"]
+    },
+    {
+      "name": "g2-microphone",
+      "desc": "Lets you dictate a prep note or a reply instead of tapping a preset."
+    }
+  ],
+  "supported_languages": ["en"]
+}

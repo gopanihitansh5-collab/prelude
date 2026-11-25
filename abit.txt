@@ -1,0 +1,14 @@
+Looking at the competitive data, here's the read before ideas:
+The gap: Of the 26 builds, ~20 are Telegram-triage variants and ~12 are Hyperliquid/Polymarket price/paper-trade clones. Track 4 (AI Assistants & Work) has exactly one build (FixGuide AI). Track 1 is a bloodbath; Track 4 is nearly empty — and the organizers literally name its moments ("check who you are meeting next, get a short answer from your AI").
+Top pick — Track 4: "Next" (meeting brief + one-tap action)
+A single card before your next meeting: who, in how long, the last thread from them, the doc you last touched with them — and one action: Reply "running 5 late" / Add prep note / Open agenda. Tap to act, hold ring to dictate a change.
+- Why it wins: organizers' own example moment; zero direct competitors; high business potential (execs/knowledge workers); clean read+write; no camera needed.
+- Feasibility trick: skip the Google-OAuth-in-WebView trap. Build on Notion (integration token) + OpenRouter (LLM) on your backend — simple token auth, full read+write. Google Calendar can be a stretch add.
+- Judge fit: Usefulness 30 (real daily moment) + Read&Write 25 (one tap acts) are your strongest levers.
+Strong alternatives
+1. "30-second inbox" (Gmail, Track 4) — one email at a time, AI draft, tap send / hold to reword. High read+write; hurdle is OAuth (pairing code on backend).
+2. Meeting → notes → tasks (Track 4) — glasses mic captures the meeting, backend STT, end card: "3 action items → save to Notion" (tap). Ambitious but the highest wow-factor and it uses the mic properly.
+3. Slack standup digest (Track 1) — your team's standup in one glance, reply with your status by tap. Same read+write logic as Telegram but in the unused app (Slack/Discord), so you stand out instead of blending in.
+4. "Second brain recall" (Notion/Drive, Track 4) — ask your own notes by voice, get a one-line answer, tap to save back. Read-heavy; weaker on write.
+My recommendation: build "Next" on Notion + OpenRouter. It hits the exact moment judges named, owns an empty track, and the token-only auth makes it shippable in the time left.
+Want me to spec "Next" (screens, SDK container layout, backend endpoints, 3-min demo script) and start the scaffold?

@@ -1,0 +1,24 @@
+﻿node_modules/
+.next/
+dist/
+*.ehpk
+*.log
+tsconfig.tsbuildinfo
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+
+# Installed agent skills (26 MB of third-party content, not our code)
+.agents/
+.claude/
+skills-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials scratch file — never commit
+new.api
+../new.api

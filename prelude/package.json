@@ -1,0 +1,35 @@
+{
+  "name": "prelude",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Prelude — the brief before your next meeting. An Even Hub app for Even Realities G2.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev -p 5173",
+    "build": "next build",
+    "build:plugin": "node scripts/build-plugin.mjs",
+    "start": "next start -p 5199",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "gate": "node scripts/gate.mjs",
+    "pack": "npm run build:plugin && evenhub pack app.json dist -o prelude.ehpk --sdk-ver 0.0.16"
+  },
+  "dependencies": {
+    "@evenrealities/even_hub_sdk": "0.0.16",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@evenrealities/evenhub-cli": "0.2.0",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "typescript": "^5.7.3",
+    "vitest": "^5.1.1"
+  },
+  "engines": {
+    "node": "^20.17.0 || >=22.13.0"
+  }
+}

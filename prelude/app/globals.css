@@ -1,0 +1,285 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0f0c;
+  --panel: #121814;
+  --panel-2: #161d18;
+  --line: #1f2a22;
+  --green: #7dffa8;
+  --dim: #4d7a5e;
+  --text: #d7e6dc;
+  --muted: #8fa697;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.55 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--green);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code,
+pre,
+.mono {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* ── the lens: exactly 576x288, 1:1 with the glasses canvas ─────────────── */
+
+.lens {
+  width: 576px;
+  height: 288px;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color: var(--green);
+  flex: none;
+}
+
+.lens-band {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 0 8px;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.lens-header {
+  top: 0;
+  height: 32px;
+  line-height: 32px;
+  font-size: 15px;
+}
+
+.lens-body {
+  top: 36px;
+  height: 200px;
+  font-size: 15px;
+  line-height: 25px;
+}
+
+.lens-status {
+  top: 244px;
+  height: 44px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--dim);
+}
+
+/* ── shell ──────────────────────────────────────────────────────────────── */
+
+.shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.brand {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.brand span {
+  color: var(--dim);
+  font-weight: 400;
+  font-size: 13px;
+  margin-left: 10px;
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+}
+
+.nav a {
+  color: var(--muted);
+}
+
+.nav a:hover {
+  color: var(--green);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 576px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lens {
+    width: 100%;
+    max-width: 576px;
+    height: auto;
+    aspect-ratio: 2 / 1;
+  }
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.card + .card {
+  margin-top: 16px;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row-title {
+  font-weight: 500;
+}
+
+.row-sub {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pill.live {
+  color: var(--green);
+  border-color: #2c4a36;
+}
+
+button {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--dim);
+}
+
+button:active {
+  background: #1a231d;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+kbd {
+  background: #1a231d;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
+.receipt {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+  background: #0e1410;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--green);
+}
+
+.receipt.fail {
+  color: #ff9d9d;
+  border-color: #4a2c2c;
+}
+
+.lede {
+  color: var(--muted);
+  max-width: 62ch;
+  margin: 0 0 24px;
+}
+
+.lede strong {
+  color: var(--text);
+  font-weight: 500;
+}

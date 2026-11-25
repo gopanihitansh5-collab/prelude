@@ -1,0 +1,311 @@
+https://dorahacks.io/hackathon/even-realities/detail
+
+
+DoraHacks
+Home
+Builds
+Hackathons
+find a team
+→
+
+
+
+
+Prize Pool
+
+10,000 USD
+
+event timeline
+(UTC+5.5)
+6 days left for submission
+Upcoming
+Pre-registration
+2026/11/18 13:30
+Submission
+2026/11/23 13:30
+Deadline
+2026/11/30 01:29
+Virtual
+Hackathon Tags
+Telegram
+Messaging
+AI
+DeFi
+Trading
+Wearables
+Blockchain
+Web3
+web3 ecosystem
+Messaging
+Crypto
+Ai
+Prediction markets
+Smart Glasses
+Submission Requirements
+GitHub/Gitlab/Bitbucket Link Required
+Demo Video Required
+
+TVM Ventures
+Heads Up: Even Realities Hackathon by TVM Ventures & Daos Hub
+Details
+Builds
+26
+Hackers
+434
+Join a Team
+Tracks
+Ask Question
+
+Sort
+
+Tracks
+Search Build by name
+
+𝙉Ξst⁠
+Glass Wallet
+A crypto wallet that lives on your glasses, check your balance, send, and confirm with a temple tap. Your phone stays in your pocket.
+Crypto / Web3WalletBNB Chain
+
+TRACK
+Messaging & News
+1 of 2
+
+
+Godson-droid
+Glance
+Telegram triage on your glasses. Reply or park it.
+No tags
+
+TRACK
+Messaging & News
+
+hacker3df4e1e
+GlanceAlert
+Your glasses watch Solana so your phone doesn't have to: the one alert that matters, one gesture to act, one tap to send it to Telegram.
+Crypto / Web3
+
+TRACK
+Messaging & News
+1 of 2
+
+
+zerbytheboss
+HeadsUp Pulse
+Glanceable 576x288 Telegram priority digest and 1-tap Hyperliquid + Polymarket paper companion for Even G2.
+AI
+TRACK
+Messaging & News
+
+samizdatproject
+TapBack
+Telegram triage on Even G2: only the chats you pick, two taps to reply, no AI on your messages.
+Other
+TRACK
+Messaging & News
+
+Mzee04
+Kerbcue
+Claim Telegram delivery jobs with one tap on Even Realities G2 glasses.
+Other
+TRACK
+Messaging & News
+
+Dr Tharun Reddy Kandukuri
+GlanceReply
+One card on your G2 glasses: the Telegram chat that needs you now, three short drafts, tap to send.
+AI
+
+TRACK
+Messaging & News
+1 of 2
+
+
+oneupped
+GlanceDesk
+Borderless Even G2 candlestick HUD: on-glasses 2D numpad for exact $ risk, auto-sized SL/TP over live 15m Hyperliquid candles, 1-tap BE & Telegram sync.
+Crypto / Web3
+
+TRACK
+Messaging & News
+1 of 2
+
+
+Alfredo de Candia
+Glance Desk
+Telegram work chats triaged on Even G2: approve an AI-drafted reply with one tap.
+No tags
+
+
+TRACK
+Messaging & News
+1 of 2
+
+
+hacker7dae0ea
+Heads Up
+Telegram groups on your Even G2 as a 3-line digest: one tap sends an AI-drafted reply, or hold and speak to change it.
+No tags
+
+
+TRACK
+Messaging & News
+1 of 2
+
+
+devbox-zero-ops
+GlanceFi G2 — Heads-Up Hyperliquid, Polymarket & Multi-Chain USDT HUD
+Even Realities G2 576x288 monochrome green HUD for live Hyperliquid perpetuals, Polymarket prediction odds, and Arbitrum USDT balances with 1-tap R1 ring Read-to-Write confirmation and packaged .ehpk build.
+No tags
+
+TRACK
+Crypto & DeFi
+
+oyentv770
+CoinGlance
+Glanceable crypto ticker for Even G2 smart glasses.
+Crypto / Web3
+TRACK
+Crypto & DeFi
+
+AbiTatang
+PerpWatch
+PerpWatch is a liquidation-risk monitor for Hyperliquid perpetuals on Even G2 glasses: open positions, distance to liquidation, funding costs, 24h sparkline, plus Telegram alerts. Read-only, no wallet, no keys, no advice.
+No tags
+
+TRACK
+Crypto & DeFi
+
+hacker8ac6ca3
+GlanceMarkets
+Crypto prediction markets and spot prices at a glance on Even G2 — one card, one glance, hands stay free.
+No tags
+
+TRACK
+Crypto & DeFi
+
+MSAbhishek22
+PolyGlance
+Live Polymarket odds on Even G2 smart glasses — a glance feed, paper bets at live prices, watchlist alerts and voice commands.
+No tags
+
+TRACK
+Crypto & DeFi
+
+usmanbamidele200
+OpticSentry OS
+Heads-up Telegram channel sentinel & MicroLED waveguide terminal for Even G2 smart glasses.
+AI
+TRACK
+Messaging & News
+
+listy
+Balas Kilat
+Telegram, glanced.
+No tags
+
+TRACK
+Messaging & News
+
+hacker308b1d7
+TickGlance
+TickGlance puts a crypto watchlist and price alerts on the Even G2 glasses: glance at live Binance prices, set or clear an alert, edit your watchlist — all with temple taps, phone untouched. Read-only data: no account, no API keys, no trading.
+Crypto / Web3
+TRACK
+Exchanges & Stocks
+
+HeyRdzy
+Binance Session
+Glanceable, voice-first, read-only Binance trading session untuk G2; live BTC/ETH/BNB/SOL (API publik, no key, paper portfolio), 5 layar 576x288, voice commands + alerts. Dibangun Vite + TS + Even Hub SDK 0.0.16
+Crypto / Web3
+TRACK
+Exchanges & Stocks
+
+hacker9280
+TG Glance — Telegram on Even Realities G2
+Telegram on Even Realities G2 smart glasses: a glanceable inbox with AI-drafted replies you can send hands-free.
+No tags
+
+TRACK
+Messaging & News
+
+maungzy86
+CryptoGlance
+Live crypto prices, price alerts and paper trading for Even Realities G2 — readable in one glance, actionable in two taps, phone stays in your pocket.
+Crypto / Web3
+TRACK
+Crypto & DeFi
+
+dikaandrean69
+LensFi
+Glanceable DeFi companion for Even G2 glasses.
+Crypto / Web3
+TRACK
+Crypto & DeFi
+
+Agent Ketong
+PaperPoly — Polymarket Paper Trading on Even Realities G2 Glasses
+PaperPoly brings Polymarket paper trading to Even Realities G2 smart glasses. Read the top 5 markets by 24h volume, speak your bet, confirm on a huge-type screen, and place the paper bet with one ring tap. No real funds, no keys, no login.
+No tags
+
+TRACK
+Crypto & DeFi
+
+nocteaquilaeking
+Heads-Up Digest
+Your Telegram highlights and crypto watchlist, on your glasses — voice-first, hands-free, read-only.
+No tags
+
+TRACK
+Messaging & News
+
+pojokkanan29
+GlanceFi
+GlanceFi brings Hyperliquid to Even G2 smart glasses: live BTC/ETH/SOL prices, one-tap paper trades with confirm, and open position + PnL — all glanceable on a 576x288 monochrome display, hands-free.
+No tags
+
+TRACK
+Crypto & DeFi
+
+Emilio Cocho Ramírez
+FixGuide AI
+FixGuide AI is a hands-free phone-repair assistant for Even Realities G2 glasses.
+AI
+TRACK
+AI Assistants & Work
+DoraHacks
+FOLLOW US
+About
+Dora Ventures
+Dora Research Blog
+DoraHacks Blog
+Dora Factory
+Resources
+Host a Hackathon
+Binance Live ↗
+YouTube ↗
+Contact us
+
+Report Issue
+
+Message
+Telegram ↗
+Discord ↗
+Email ↗
+© 2026 DoraHacks. All rights reserved.
+
+
+
+
+Code of conduct
+|
+Privacy policy
+|
+Terms of service
+Share
+
+
+Congratulations!
+You have successfully registered for Heads Up: Even Realities Hackathon by TVM Ventures & Daos Hub. Checkout our next steps to get started.
+
+
+https://dorahacks.io/org/16330
