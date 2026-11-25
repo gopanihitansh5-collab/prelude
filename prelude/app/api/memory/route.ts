@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { recall } from '@/core/memory'
-import { getBriefedMeetings } from '@/lib/meetings'
+import { getMeetings } from '@/lib/meetings'
 import type { SourceItem } from '@/lib/integrations/types'
 
 export const dynamic = 'force-dynamic'
@@ -23,7 +23,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, error: 'q is required' }, { status: 400 })
   }
 
-  const { meetings, mode } = await getBriefedMeetings()
+  // `getMeetings`, not `getBriefedMeetings`: this route only reads threads, so
+  // running web enrichment here would fire one Exa search per thin meeting for
+  // data that is then discarded.
+  const { meetings, mode } = await getMeetings()
 
   const index: SourceItem[] = meetings.flatMap((meeting) =>
     meeting.thread.map((message, i) => ({

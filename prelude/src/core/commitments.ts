@@ -95,11 +95,16 @@ function sentences(text: string): string[] {
  *
  * `selfName` is how the user appears in `from`. A message from the user creates
  * a commitment they owe; a message from anyone else creates one they are owed.
+ *
+ * `idPrefix` makes ids unique across meetings. The counter resets per call, so
+ * without a prefix two meetings with a promise at the same millisecond produce
+ * identical ids — which breaks React keys and any lookup by id.
  */
 export function detectCommitments(
   thread: ThreadMessage[],
   selfName: string,
   nowMs: number,
+  idPrefix = '',
 ): Commitment[] {
   const found: Commitment[] = []
 
@@ -117,7 +122,7 @@ export function detectCommitments(
       const overdue = dueAt ? Date.parse(dueAt) < nowMs : false
 
       found.push({
-        id: `c_${found.length}_${promisedAtMs}`,
+        id: `${idPrefix}c_${found.length}_${promisedAtMs}`,
         owner: fromMe ? 'me' : 'them',
         person: fromMe ? 'you' : message.from,
         label: extractLabel(sentence),

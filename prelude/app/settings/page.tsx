@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
  * Settings.
  *
  * Read-only by design. Secrets live in `.env.local` and are never editable from
- * a web page â€” a settings form that writes keys would be a credential-exfiltration
+ * a web page - a settings form that writes keys would be a credential-exfiltration
  * surface for no benefit. This page reports what is configured so an operator can
  * verify a deployment without reading the environment.
  *
@@ -17,6 +17,9 @@ export const dynamic = 'force-dynamic'
  */
 export default async function SettingsPage() {
   const llm = resolveLlmConfig()
+  // Notion's live read needs both variables; a token alone leaves the app on
+  // fixtures, so the report must not claim otherwise.
+  const notionLive = Boolean(process.env.NOTION_TOKEN && process.env.NOTION_DATABASE_ID)
 
   const rows: { label: string; value: string; live: boolean; note?: string }[] = [
     {
@@ -37,11 +40,13 @@ export default async function SettingsPage() {
     },
     {
       label: 'Notion',
-      value: process.env.NOTION_TOKEN ? 'configured' : 'not configured',
-      live: Boolean(process.env.NOTION_TOKEN),
-      note: process.env.NOTION_DATABASE_ID
+      value: notionLive ? 'configured' : 'not configured',
+      live: notionLive,
+      note: notionLive
         ? 'Live read is wired: getMeetings() queries the database.'
-        : 'Set NOTION_DATABASE_ID to enable the live read path.',
+        : process.env.NOTION_TOKEN
+          ? 'Token present but NOTION_DATABASE_ID is missing, so the read path stays on fixtures.'
+          : 'Set NOTION_TOKEN and NOTION_DATABASE_ID to enable the live read path.',
     },
     {
       label: 'Email (Resend)',
@@ -67,7 +72,7 @@ export default async function SettingsPage() {
     <Shell
       title="settings"
       active="settings"
-      subtitle="Read-only. Secrets live in .env.local and are never editable from a web page â€” a settings form that writes keys would be an exfiltration surface for no benefit."
+      subtitle="Read-only. Secrets live in .env.local and are never editable from a web page - a settings form that writes keys would be an exfiltration surface for no benefit."
     >
       <div className="card">
         <h2>Configuration</h2>

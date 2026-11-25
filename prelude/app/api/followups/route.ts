@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { detectCommitments, openCommitments } from '@/core/commitments'
-import { getBriefedMeetings } from '@/lib/meetings'
+import { getMeetings } from '@/lib/meetings'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,10 +15,13 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET() {
   const now = Date.now()
-  const { meetings, mode } = await getBriefedMeetings()
+  // `getMeetings`, not `getBriefedMeetings`: this route only reads threads, so
+  // running web enrichment here would fire one Exa search per thin meeting for
+  // data that is then discarded.
+  const { meetings, mode } = await getMeetings()
 
   const all = meetings.flatMap((meeting) =>
-    detectCommitments(meeting.thread, 'You', now).map((commitment) => ({
+    detectCommitments(meeting.thread, 'You', now, `${meeting.id}:`).map((commitment) => ({
       ...commitment,
       meetingId: meeting.id,
       meetingTitle: meeting.title,

@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
  * Memory.
  *
  * Cross-source recall over the meetings the app actually has. The query comes
- * from the URL so the page is shareable and the back button works â€” no client
+ * from the URL so the page is shareable and the back button works - no client
  * state needed.
  *
  * The scoring is deterministic term overlap with a recency bonus, not an
@@ -19,10 +19,12 @@ export const dynamic = 'force-dynamic'
 export default async function MemoryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  // Next 16 supplies `string | string[] | undefined` per key. A repeated param
+  // (`?q=a&q=b`) yields an array, so the type must say so or `.trim()` throws.
+  searchParams: Promise<{ q?: string | string[] }>
 }) {
   const { q } = await searchParams
-  const query = (q ?? '').trim()
+  const query = (Array.isArray(q) ? (q[0] ?? '') : (q ?? '')).trim()
 
   const { meetings, mode } = await getBriefedMeetings()
 
@@ -31,7 +33,7 @@ export default async function MemoryPage({
       id: `${meeting.id}-${i}`,
       provider: meeting.channel,
       kind: 'message' as const,
-      title: `${message.from} Â· ${meeting.title}`,
+      title: `${message.from} - ${meeting.title}`,
       body: message.text,
       at: message.at,
       author: message.from,
@@ -44,7 +46,7 @@ export default async function MemoryPage({
     <Shell
       title="memory"
       active="memory"
-      subtitle="Ask what was said, decided or promised. Scoring is deterministic term overlap with a recency bonus â€” no embeddings, so the same query always returns the same answer."
+      subtitle="Ask what was said, decided or promised. Scoring is deterministic term overlap with a recency bonus - no embeddings, so the same query always returns the same answer."
     >
       <div className="card">
         <h2>Search</h2>
@@ -69,7 +71,7 @@ export default async function MemoryPage({
           <button type="submit">Search</button>
         </form>
         <div className="row-sub" style={{ marginTop: 10 }}>
-          {index.length} indexed messages Â· source <span className="pill">{mode}</span>
+          {index.length} indexed messages - source <span className="pill">{mode}</span>
         </div>
       </div>
 
@@ -85,7 +87,7 @@ export default async function MemoryPage({
 
           {answer.empty ? (
             <p className="row-sub" style={{ margin: '10px 0 0' }}>
-              Nothing in the current index matches â€œ{query}â€. With a live provider configured, the
+              Nothing in the current index matches "{query}". With a live provider configured, the
               index grows to include those threads.
             </p>
           ) : (
@@ -102,7 +104,7 @@ export default async function MemoryPage({
                   {hit.item.body}
                 </div>
                 <div className="row-sub" style={{ marginTop: 6 }}>
-                  {shortDate(hit.item.at)} Â· {hit.item.provider} Â· score {hit.score.toFixed(1)}
+                  {shortDate(hit.item.at)} - {hit.item.provider} - score {hit.score.toFixed(1)}
                 </div>
               </div>
             ))
@@ -113,8 +115,13 @@ export default async function MemoryPage({
           <h2>Try</h2>
           <div className="controls" style={{ marginTop: 0 }}>
             {['enterprise pricing', 'migration', 'retention', 'pricing'].map((suggestion) => (
-              <a key={suggestion} href={`/memory?q=${encodeURIComponent(suggestion)}`}>
-                <button type="button">{suggestion}</button>
+              <a
+                key={suggestion}
+                href={`/memory?q=${encodeURIComponent(suggestion)}`}
+                className="pill"
+                style={{ padding: '7px 12px', fontSize: 12 }}
+              >
+                {suggestion}
               </a>
             ))}
           </div>

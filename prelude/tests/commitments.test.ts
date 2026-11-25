@@ -138,3 +138,30 @@ describe('commitmentLine', () => {
     expect(commitmentLine(c)).toMatch(/^OVERDUE: /)
   })
 })
+
+describe('detectCommitments id uniqueness', () => {
+  it('produces the same id for the same thread without a prefix', () => {
+    const thread = [msg('You', "I'll send the pricing by Wednesday.")]
+    const a = detectCommitments(thread, 'You', NOW)
+    const b = detectCommitments(thread, 'You', NOW)
+    expect(a[0]?.id).toBe(b[0]?.id)
+  })
+
+  it('produces different ids for two meetings with the same promise time', () => {
+    const thread = [msg('You', "I'll send the pricing by Wednesday.")]
+    const first = detectCommitments(thread, 'You', NOW, 'm-a:')
+    const second = detectCommitments(thread, 'You', NOW, 'm-b:')
+    expect(first[0]?.id).not.toBe(second[0]?.id)
+    expect(first[0]?.id.startsWith('m-a:')).toBe(true)
+    expect(second[0]?.id.startsWith('m-b:')).toBe(true)
+  })
+
+  it('keeps ids unique across a merged list from several meetings', () => {
+    const thread = [msg('You', "I'll send the pricing by Wednesday.")]
+    const merged = ['m-a', 'm-b', 'm-c'].flatMap((id) =>
+      detectCommitments(thread, 'You', NOW, `${id}:`),
+    )
+    const ids = merged.map((c) => c.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+})

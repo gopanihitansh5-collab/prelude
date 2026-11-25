@@ -27,7 +27,7 @@ export default async function ActionsPage() {
     <Shell
       title="actions"
       active="actions"
-      subtitle="Every write this process has attempted, newest first. The status is the lifecycle's own â€” a receipt only exists once a provider confirmed the action."
+      subtitle="Every write this process has attempted, newest first. The status is the lifecycle's own - a receipt only exists once a provider confirmed the action."
     >
       <div className="card">
         <h2>History</h2>
@@ -45,10 +45,10 @@ export default async function ActionsPage() {
               <div className="row" style={{ border: 0, padding: 0 }}>
                 <div>
                   <div className="row-title">
-                    {action.kind} Â· {action.text}
+                    {action.kind} - {action.text}
                   </div>
                   <div className="row-sub">
-                    {action.id} Â· meeting {action.meetingId}
+                    {action.id} - meeting {action.meetingId}
                   </div>
                 </div>
                 <span className="pill" style={{ color: statusColor(action.status) }}>
@@ -57,8 +57,8 @@ export default async function ActionsPage() {
               </div>
               <div className="row-sub" style={{ marginTop: 8 }}>
                 created {action.createdAt}
-                {action.providerReference ? ` Â· provider ${action.providerReference}` : ''}
-                {action.error ? ` Â· ${action.error}` : ''}
+                {action.providerReference ? ` - provider ${action.providerReference}` : ''}
+                {action.error ? ` - ${action.error}` : ''}
               </div>
             </div>
           ))
@@ -70,7 +70,7 @@ export default async function ActionsPage() {
         <p className="row-sub" style={{ margin: 0 }}>
           created â†’ validated â†’ awaiting_confirmation â†’ authorized â†’ executing â†’ provider_confirmed
           â†’ receipt_persisted. A 5xx or a network error after the request left is{' '}
-          <code>reconciling</code>, never a blind retry â€” otherwise a lost response sends a
+          <code>reconciling</code>, never a blind retry - otherwise a lost response sends a
           duplicate message.
         </p>
       </div>

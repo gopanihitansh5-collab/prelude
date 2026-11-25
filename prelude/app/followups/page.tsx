@@ -1,5 +1,5 @@
 import { Shell } from '../components/shell'
-import { detectCommitments, openCommitments } from '@/core/commitments'
+import { detectCommitments, openCommitments, type Commitment } from '@/core/commitments'
 import { getBriefedMeetings } from '@/lib/meetings'
 import { relTime } from '@/core/format'
 
@@ -20,19 +20,17 @@ export default async function FollowupsPage() {
   const now = Date.now()
   const { meetings, mode } = await getBriefedMeetings()
 
+  // Attach the meeting title at detection time, and prefix the id with the
+  // meeting id so two meetings cannot produce colliding commitment ids.
   const all = meetings.flatMap((meeting) =>
-    detectCommitments(meeting.thread, 'You', now).map((commitment) => ({
+    detectCommitments(meeting.thread, 'You', now, `${meeting.id}:`).map((commitment) => ({
       ...commitment,
       meetingId: meeting.id,
       meetingTitle: meeting.title,
     })),
   )
 
-  const open = openCommitments(all).map((commitment) => ({
-    ...commitment,
-    meetingTitle:
-      all.find((c) => c.id === commitment.id)?.meetingTitle ?? 'unknown meeting',
-  }))
+  const open = openCommitments(all) as (Commitment & { meetingTitle: string })[]
   const overdue = open.filter((c) => c.status === 'overdue')
 
   return (

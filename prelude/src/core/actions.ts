@@ -1,15 +1,15 @@
-﻿// Action ranking and the state machine.
+// Action ranking and the state machine.
 //
 // The reducer is the whole app's behaviour in one pure function. The Even layer
 // only translates gestures into Inputs and paints the result; every decision
 // about what a tap means lives here, where it can be tested.
 //
 // Design rules encoded below:
-//   â€¢ Reply leads when the meeting is imminent â€” that is the most common need.
-//   â€¢ "Join now" only appears in the last five minutes.
-//   â€¢ The agenda only appears when there is one.
-//   â€¢ Double-tap is "back" everywhere except the root, where it must exit.
-//   â€¢ Voice never commits on its own: REVIEW is a mandatory state.
+//   - Reply leads when the meeting is imminent - that is the most common need.
+//   - "Join now" only appears in the last five minutes.
+//   - The agenda only appears when there is one.
+//   - Double-tap is "back" everywhere except the root, where it must exit.
+//   - Voice never commits on its own: REVIEW is a mandatory state.
 
 import { nextMeeting, upcoming } from './brief.ts'
 import { NOTE_PRESETS, REPLY_PRESETS } from './types.ts'
@@ -151,7 +151,7 @@ export function reduce(state: AppState, input: Input): ReduceResult {
 
     case 'double_click':
       // Root page must raise the system exit dialog. From any other screen,
-      // double-tap is "back" â€” the same gesture the OS uses for back.
+      // double-tap is "back" - the same gesture the OS uses for back.
       if (state.screen === 'brief') return { state, effect: { kind: 'exit' } }
       return { state: { ...state, screen: 'brief', busy: false }, effect: noEffect }
 
