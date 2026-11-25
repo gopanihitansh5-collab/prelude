@@ -62,16 +62,19 @@ export function ActionFlow({ progress, stage, pointer }: FlowProps) {
       groupRef.current.rotation.x = -pointer.y * 0.1
     }
 
-    // The packet runs out to the provider, then back to the receipt. The return
-    // leg only happens once the action is verified.
+    // The packet travels out to the provider, then back to the receipt. The
+    // return leg is what makes it a receipt rather than a send, so it must
+    // actually move backwards — the previous version multiplied by 0 and the
+    // packet never came home.
+    const startX = STOPS[0].x
+    const endX = STOPS[STOPS.length - 1]!.x
+    const span = endX - startX
+
     const outbound = Math.min(1, progress / 0.6)
     const inbound = verified ? Math.max(0, (progress - 0.6) / 0.4) : 0
 
-    const startX = STOPS[0].x
-    const endX = STOPS[STOPS.length - 1]!.x
-    const x = verified
-      ? startX + (endX - startX) * outbound - (endX - startX) * inbound * 0.0
-      : startX + (endX - startX) * outbound
+    // Out to the provider, then back to the receipt stop.
+    const x = startX + span * outbound - span * inbound
 
     if (packetRef.current) {
       packetRef.current.position.x = x
@@ -81,7 +84,7 @@ export function ActionFlow({ progress, stage, pointer }: FlowProps) {
     }
 
     if (trailRef.current) {
-      // The trail stretches behind the packet.
+      // The trail spans from the start to wherever the packet is now.
       const travelled = Math.abs(x - startX)
       trailRef.current.scale.x = Math.max(0.001, travelled)
       trailRef.current.position.x = startX + (x - startX) / 2

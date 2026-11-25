@@ -16,7 +16,7 @@
 //   07 CLOSING      — one card, one tap
 
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Stage } from './stage'
 import { useScrollChoreography } from './use-scroll'
 import type { Provider } from './ecosystem'
@@ -39,9 +39,37 @@ export function Experience({
   testCount,
   providers,
 }: ExperienceProps) {
-  const { hero, product } = useScrollChoreography()
+  const { store, activeChapter } = useScrollChoreography()
   const navRef = useRef<HTMLElement>(null)
   const lensRef = useRef<HTMLDivElement>(null)
+
+  // `activeChapter` drives the nav highlight. It changes a handful of times
+  // across the page, so it is safe as React state.
+  const chapterHref: Record<string, string> = {
+    intelligence: '#intelligence',
+    roundtrip: '#roundtrip',
+    ecosystem: '#ecosystem',
+  }
+  const activeHref = chapterHref[activeChapter]
+
+  // The 3D scenes read progress from the store, so the page itself does not
+  // re-render on scroll. A local state mirror is kept only for the two scenes
+  // that need a numeric prop; it updates at most a few times per second.
+  const [progress, setProgress] = useState({ hero: 0, product: 0 })
+
+  useEffect(() => {
+    let last = { hero: -1, product: -1 }
+    return store.subscribe((next) => {
+      // Quantise to 1/60 so React re-renders at most ~60 times across the whole
+      // page rather than on every frame.
+      const hero = Math.round(next.hero * 60) / 60
+      const product = Math.round(next.product * 60) / 60
+      if (hero !== last.hero || product !== last.product) {
+        last = { hero, product }
+        setProgress({ hero, product })
+      }
+    })
+  }, [store])
 
   // Nav hairline + reveal-on-enter + lens tilt. All optional enhancement.
   useEffect(() => {
@@ -97,9 +125,15 @@ export function Experience({
           Prelude <span>for Even Realities G2</span>
         </Link>
         <div className="links">
-          <a href="#intelligence">Intelligence</a>
-          <a href="#roundtrip">Round trip</a>
-          <a href="#ecosystem">Ecosystem</a>
+          <a href="#intelligence" data-active={activeHref === '#intelligence'}>
+            Intelligence
+          </a>
+          <a href="#roundtrip" data-active={activeHref === '#roundtrip'}>
+            Round trip
+          </a>
+          <a href="#ecosystem" data-active={activeHref === '#ecosystem'}>
+            Ecosystem
+          </a>
           <Link href="/lens">Lens</Link>
           <Link href="/dashboard" className="pill-cta">
             Dashboard
@@ -107,10 +141,15 @@ export function Experience({
         </div>
       </nav>
 
+      {/* A thin progress rail: the only always-visible scroll affordance. */}
+      <div className="xp-progress" aria-hidden="true">
+        <span style={{ transform: `scaleX(var(--scroll-page, 0))` }} />
+      </div>
+
       {/* ── 01 · ARRIVAL ─────────────────────────────────────────────────── */}
-      <section className="chapter hero-xp" data-scene="hero" data-interactive="false">
+      <section className="chapter hero-xp" data-scene="hero" data-chapter="hero" data-interactive="false">
         <div className="stage">
-          <Stage scene="universe" progress={hero} bands={bands} />
+          <Stage scene="universe" progress={progress.hero} bands={bands} />
         </div>
         <div className="xp-fallback-glow" />
 
@@ -157,9 +196,9 @@ export function Experience({
       </section>
 
       {/* ── 01b · THE HERO OBJECT ────────────────────────────────────────── */}
-      <section className="chapter" data-scene="product">
+      <section className="chapter" data-scene="product" data-chapter="product">
         <div className="stage">
-          <Stage scene="glasses" progress={product} bands={bands} cameraZ={6.6} />
+          <Stage scene="glasses" progress={progress.product} bands={bands} cameraZ={6.6} />
         </div>
         <div className="xp-fallback-glow" />
 
@@ -177,9 +216,9 @@ export function Experience({
       </section>
 
       {/* ── 03 · INTELLIGENCE ────────────────────────────────────────────── */}
-      <section className="chapter" id="intelligence">
+      <section className="chapter" id="intelligence" data-chapter="intelligence">
         <div className="stage">
-          <Stage scene="network" progress={1} bands={bands} cameraZ={8.4} />
+          <Stage scene="network" progress={1} bands={bands} cameraZ={8.4} layout="band" />
         </div>
         <div className="xp-fallback-glow" />
 
@@ -283,9 +322,9 @@ use-of-funds breakdown
       </section>
 
       {/* ── 05 · ACTION ──────────────────────────────────────────────────── */}
-      <section className="chapter" id="roundtrip">
+      <section className="chapter" id="roundtrip" data-chapter="roundtrip">
         <div className="stage">
-          <Stage scene="flow" progress={1} bands={bands} flowStage="verified" cameraZ={6.4} />
+          <Stage scene="flow" progress={1} bands={bands} flowStage="verified" cameraZ={6.4} layout="band" />
         </div>
         <div className="xp-fallback-glow" />
 
@@ -380,9 +419,9 @@ SENT · 12:04 · running 5 late`}</pre>
       </section>
 
       {/* ── 06 · ECOSYSTEM ───────────────────────────────────────────────── */}
-      <section className="chapter" id="ecosystem">
+      <section className="chapter" id="ecosystem" data-chapter="ecosystem">
         <div className="stage">
-          <Stage scene="ecosystem" progress={1} bands={bands} providers={providers} cameraZ={7.6} />
+          <Stage scene="ecosystem" progress={1} bands={bands} providers={providers} cameraZ={7.6} layout="band" />
         </div>
         <div className="xp-fallback-glow" />
 

@@ -31,6 +31,11 @@ interface StageProps {
   providers?: Provider[]
   /** Camera distance. Scenes have different natural framings. */
   cameraZ?: number
+  /**
+   * `band` puts the canvas in a bounded box above the text, so a 3D node can
+   * never land on a paragraph. `full` fills the chapter (hero only).
+   */
+  layout?: 'full' | 'band'
 }
 
 function supportsWebGL(): boolean {
@@ -52,6 +57,7 @@ export function Stage({
   flowStage = 'proposed',
   providers = [],
   cameraZ = 7.2,
+  layout = 'full',
 }: StageProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
@@ -88,7 +94,11 @@ export function Stage({
   }, [enabled])
 
   return (
-    <div ref={hostRef} className="stage" aria-hidden="true">
+    <div
+      ref={hostRef}
+      className={layout === 'band' ? 'stage stage-band' : 'stage'}
+      aria-hidden="true"
+    >
       {enabled && visible ? (
         <Canvas
           dpr={[1, 2]}

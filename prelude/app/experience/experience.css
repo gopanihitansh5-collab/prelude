@@ -95,6 +95,33 @@
   color: var(--ink);
 }
 
+.xp-nav .links a[data-active='true'] {
+  color: var(--emerald);
+}
+
+/* The scroll progress rail. One pixel tall, driven by a CSS variable the scroll
+   hook writes, so it costs no React render. */
+.xp-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 101;
+  background: transparent;
+  pointer-events: none;
+}
+
+.xp-progress span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--emerald), var(--cyan));
+  opacity: 0.85;
+}
+
 .xp-nav .pill-cta {
   padding: 7px 16px;
   border-radius: 999px;
@@ -133,6 +160,41 @@
   touch-action: pan-y;
 }
 
+/* A bounded stage: a fixed-height band at the top of a chapter, with the text
+   below it. This is what content-heavy chapters use, so a 3D node can never
+   land on top of a paragraph. */
+.stage-band {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: clamp(300px, 42vh, 460px);
+  margin-bottom: clamp(28px, 4vw, 52px);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  background: radial-gradient(
+    ellipse 70% 70% at 50% 50%,
+    rgba(125, 255, 168, 0.05),
+    transparent 70%
+  );
+}
+
+/* When a chapter uses a band, the chapter itself stacks: band, then text. */
+.chapter:has(> .stage-band) {
+  display: block;
+  padding-top: clamp(80px, 10vh, 120px);
+}
+
+.chapter:has(> .stage-band) > .chapter-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* The scrim is unnecessary when the scene is in its own box. */
+.chapter:has(> .stage-band) > .chapter-inner::before {
+  display: none;
+}
+
 /* Chapters that are pure text keep the canvas out of the way. */
 .chapter[data-interactive='false'] .stage {
   pointer-events: none;
@@ -154,6 +216,62 @@
   z-index: 2;
   width: 100%;
   max-width: 1200px;
+}
+
+/* A scrim behind the text so a 3D node can never make a paragraph unreadable.
+   It sits inside .chapter-inner's stacking context, so it paints above the
+   canvas (z-index 0) but below the text. */
+.chapter-inner::before {
+  content: '';
+  position: absolute;
+  inset: -48px -72px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 60% at 28% 50%,
+    rgba(3, 6, 5, 0.94) 0%,
+    rgba(3, 6, 5, 0.72) 45%,
+    transparent 78%
+  );
+}
+
+/* Interactive chapters put the scene on the right and the text on the left, so
+   the two never occupy the same pixels. Below 900px they stack instead. */
+@media (min-width: 900px) {
+  .chapter[data-interactive='true'] .stage {
+    left: 44%;
+    right: 0;
+    width: auto;
+  }
+
+  .chapter[data-interactive='true'] .chapter-inner {
+    max-width: 46%;
+    margin-right: auto;
+  }
+
+  .chapter[data-interactive='true'] .chapter-inner::before {
+    inset: -56px -40px -56px -80px;
+    background: radial-gradient(
+      ellipse 78% 70% at 34% 50%,
+      rgba(3, 6, 5, 0.96) 0%,
+      rgba(3, 6, 5, 0.8) 50%,
+      transparent 82%
+    );
+  }
+}
+
+/* On narrow screens the scene sits behind the text, so it needs to be dimmer
+   and the scrim stronger. */
+@media (max-width: 899px) {
+  .chapter[data-interactive='true'] .chapter-inner::before {
+    inset: -40px -24px;
+    background: radial-gradient(
+      ellipse 90% 80% at 50% 50%,
+      rgba(3, 6, 5, 0.96) 0%,
+      rgba(3, 6, 5, 0.86) 55%,
+      transparent 88%
+    );
+  }
 }
 
 /* ── hero ───────────────────────────────────────────────────────────────── */
