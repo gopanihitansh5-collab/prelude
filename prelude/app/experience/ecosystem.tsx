@@ -9,7 +9,7 @@
 // provider with a key is `live`; one implemented but unconfigured is `ready`;
 // one not built is `planned`. The visual difference is real, not decorative.
 
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -153,6 +153,8 @@ export function Ecosystem({ providers, pointer }: EcosystemProps) {
       coreRef.current.rotation.x = t * 0.22
     }
   })
+
+  useEffect(() => () => spokeGeometry.dispose(), [spokeGeometry])
 
   return (
     <group ref={groupRef}>

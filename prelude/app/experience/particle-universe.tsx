@@ -15,7 +15,7 @@
 //     one number the scroll can drive.
 //   • The render loop pauses when the canvas is off-screen (see the wrapper).
 
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -145,11 +145,22 @@ export function ParticleUniverse({ progress, pointer }: UniverseProps) {
       material.opacity = Math.max(0, eased - 0.25) * 0.34
     }
 
-    // Keep the camera framed on narrow screens.
+    // Keep the camera framed on narrow screens. `size` is a stable object from
+    // useThree, so this reads a value rather than allocating.
     const aspect = size.width / Math.max(1, size.height)
     state.camera.position.z = aspect < 1 ? 9.5 : 7.2
     state.camera.lookAt(0, 0, 0)
   })
+
+  // Release GPU resources on unmount. Disposing the geometry does not dispose
+  // the material's texture, so the sprite is released explicitly.
+  useEffect(() => {
+    return () => {
+      pointGeometry.dispose()
+      lineGeometry.dispose()
+      sprite.dispose()
+    }
+  }, [pointGeometry, lineGeometry, sprite])
 
   return (
     <group ref={groupRef}>

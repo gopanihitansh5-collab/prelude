@@ -96,6 +96,11 @@ export function Stage({
           camera={{ position: [0, 0, cameraZ], fov: 42 }}
           // Pause the loop entirely when the section is off-screen.
           frameloop={visible ? 'always' : 'never'}
+          // The canvas is decorative: every fact it shows also exists as DOM
+          // text in the chapter. Hiding it from assistive tech is correct, and
+          // it keeps the tab order on the real links.
+          aria-hidden="true"
+          tabIndex={-1}
         >
           <color attach="background" args={['#030605']} />
           <fog attach="fog" args={['#030605', 6, 16]} />

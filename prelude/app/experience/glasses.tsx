@@ -10,7 +10,7 @@
 // The card is the point. It is not decoration — it is the actual Prelude brief,
 // rendered as a texture from the same three bands the glasses paint.
 
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -68,6 +68,10 @@ export function Glasses({ progress, pointer, bands }: GlassesProps) {
   const groupRef = useRef<THREE.Group>(null)
   const cardRef = useRef<THREE.Group>(null)
   const lensTexture = useLensTexture(bands)
+
+  // A CanvasTexture holds GPU memory. Release it when the scene unmounts or the
+  // bands change, or a route change leaks one texture per visit.
+  useEffect(() => () => lensTexture?.dispose(), [lensTexture])
 
   const eased = progress * progress * (3 - 2 * progress)
 

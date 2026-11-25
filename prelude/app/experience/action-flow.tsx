@@ -12,7 +12,7 @@
 // The packet travels glasses → engine → provider → back. The return leg is what
 // makes it a receipt rather than a send.
 
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -87,6 +87,8 @@ export function ActionFlow({ progress, stage, pointer }: FlowProps) {
       trailRef.current.position.x = startX + (x - startX) / 2
     }
   })
+
+  useEffect(() => () => railGeometry.dispose(), [railGeometry])
 
   return (
     <group ref={groupRef}>

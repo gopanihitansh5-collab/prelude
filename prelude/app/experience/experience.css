@@ -120,13 +120,22 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  pointer-events: none;
+  /* The canvas must receive pointer events or the hover interactions on the
+     knowledge graph and the ecosystem can never fire. Text sits above it in
+     .chapter-inner, so it stays selectable. */
+  pointer-events: auto;
 }
 
 .stage canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
+  touch-action: pan-y;
+}
+
+/* Chapters that are pure text keep the canvas out of the way. */
+.chapter[data-interactive='false'] .stage {
+  pointer-events: none;
 }
 
 /* ── chapter shell ──────────────────────────────────────────────────────── */
@@ -598,6 +607,22 @@
   font-size: 12px;
   color: var(--emerald);
   opacity: 0.9;
+}
+
+/* A miniature lens readout inside a capability cell. */
+.xp-mini {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(125, 255, 168, 0.14);
+  background: rgba(0, 0, 0, 0.55);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--emerald);
+  opacity: 0.85;
+  overflow-x: auto;
+  white-space: pre;
 }
 
 /* ── numbers ────────────────────────────────────────────────────────────── */

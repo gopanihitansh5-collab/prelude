@@ -108,7 +108,7 @@ export function Experience({
       </nav>
 
       {/* ── 01 · ARRIVAL ─────────────────────────────────────────────────── */}
-      <section className="chapter hero-xp" data-scene="hero">
+      <section className="chapter hero-xp" data-scene="hero" data-interactive="false">
         <div className="stage">
           <Stage scene="universe" progress={hero} bands={bands} />
         </div>
@@ -156,10 +156,10 @@ export function Experience({
         </div>
       </section>
 
-      {/* ── 02 · REVEAL ──────────────────────────────────────────────────── */}
+      {/* ── 01b · THE HERO OBJECT ────────────────────────────────────────── */}
       <section className="chapter" data-scene="product">
         <div className="stage">
-          <Stage scene="glasses" progress={product} bands={bands} />
+          <Stage scene="glasses" progress={product} bands={bands} cameraZ={6.6} />
         </div>
         <div className="xp-fallback-glow" />
 
@@ -170,7 +170,8 @@ export function Experience({
           </h2>
           <p className="xp-body" style={{ margin: '0 auto' }}>
             Intelligence that moves with you. The display activates, and the brief rises out of the
-            lens — three bands, seven lines, no scrolling.
+            lens — three bands, seven lines, no scrolling. 576 × 288, 16 levels of green, and no
+            camera or speaker to lean on.
           </p>
         </div>
       </section>
@@ -200,7 +201,7 @@ export function Experience({
       </section>
 
       {/* ── 04 · EXPERIENCE ──────────────────────────────────────────────── */}
-      <section className="chapter">
+      <section className="chapter" data-interactive="false">
         <div className="chapter-inner" style={{ textAlign: 'center' }}>
           <p className="xp-label xp-reveal">04 · The experience</p>
           <h2 className="xp-title xp-reveal" style={{ margin: '0 auto 20px' }}>
@@ -215,6 +216,68 @@ export function Experience({
             <div className="band h">{bands.header}</div>
             <div className="band b">{bands.body}</div>
             <div className="band s">{bands.status}</div>
+          </div>
+
+          <div className="xp-actions" style={{ marginTop: 40 }}>
+            <Link href="/lens" className="xp-btn xp-btn-primary">
+              Drive it yourself
+            </Link>
+            <Link href="/followups" className="xp-btn xp-btn-ghost">
+              See the follow-up radar
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 04b · THE THREE SURFACES ─────────────────────────────────────── */}
+      <section className="chapter" data-interactive="false">
+        <div className="chapter-inner">
+          <p className="xp-label xp-reveal">What the lens actually does</p>
+          <h2 className="xp-title xp-reveal">
+            Three surfaces. <span className="dim">One decision each.</span>
+          </h2>
+
+          <div className="xp-grid">
+            <div className="xp-cell xp-reveal">
+              <span className="tag">Brief</span>
+              <h3>Know before you walk in</h3>
+              <p>
+                Who, the last message, the doc you touched, the agenda, and the one commitment that
+                is still open. Seven lines, no scrolling.
+              </p>
+              <pre className="xp-mini">{`PRELUDE · 9m
+Ada Lovelace · CTO
+Pricing v3 — final call
+OPEN: revised pricing
+3 items · 35m`}</pre>
+            </div>
+
+            <div className="xp-cell xp-reveal">
+              <span className="tag">Voice</span>
+              <h3>Ask, then confirm</h3>
+              <p>
+                The state machine makes <code>transcribing → confirmed</code> illegal. You always
+                see the parsed action and tap. A misheard transcript can never send a message.
+              </p>
+              <pre className="xp-mini">{`IDLE → LISTENING
+  → TRANSCRIBING
+  → REVIEW  ← you tap here
+  → CONFIRMED → RECEIPT`}</pre>
+            </div>
+
+            <div className="xp-cell xp-reveal">
+              <span className="tag">Follow-up</span>
+              <h3>Remember every promise</h3>
+              <p>
+                Detection is deterministic: promise patterns plus a deadline phrase. An LLM may
+                propose a commitment, but the rules that decide whether it is open are code.
+              </p>
+              <pre className="xp-mini">{`2 OPEN COMMITMENTS
+revised enterprise pricing
+  due in 3d · open
+use-of-funds breakdown
+  due in 3d · open`}</pre>
+            </div>
           </div>
         </div>
       </section>

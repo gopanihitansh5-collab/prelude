@@ -11,7 +11,7 @@
 // people, meetings, conversations, emails, documents, decisions, commitments,
 // tasks. Every one of those exists in src/core/types.ts or commitments.ts.
 
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -187,6 +187,9 @@ export function IntelligenceNetwork({ progress, pointer }: NetworkProps) {
       coreRef.current.scale.setScalar(pulse * (0.6 + progress * 0.4))
     }
   })
+
+  // Release the edge buffer on unmount.
+  useEffect(() => () => edgeGeometry.dispose(), [edgeGeometry])
 
   return (
     <group ref={groupRef}>
