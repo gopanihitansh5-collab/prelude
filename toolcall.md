@@ -95,3 +95,30 @@ Toolchain: Node **v22.14.0**, npm **11.12.1**. `node_modules` is installed.
   `.env*`, `.agents/`, `.claude/`, `skills-lock.json`, `new.api`.
 - Commit trailer:
   `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`
+- Remote: `https://github.com/gopanihitansh5-collab/prelude` (branch `master`).
+- Push without persisting the token — the remote URL stays clean:
+  ```powershell
+  $token = (Get-Content "C:\Users\rcgop\Desktop\work\gopanigithub.txt" -TotalCount 1).Trim()
+  $b64 = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("x-access-token:$token"))
+  git -c http.extraheader="AUTHORIZATION: basic $b64" push origin master
+  ```
+- `git` writes progress to stderr → PowerShell shows a red `NativeCommandError` even on
+  success. Trust `$LASTEXITCODE`, not the colour.
+- Commit messages: write with `[System.IO.File]::WriteAllText(path, text, UTF8Encoding($false))`
+  then `git commit -F`. `Out-File -Encoding utf8` adds a **BOM** to the subject line.
+
+---
+
+## VS Code tool limit — "only supports 128 tools"
+
+**Cause:** the `vercel` MCP server (`https://mcp.vercel.com`) exposes ~250 tools. With the
+built-in tools that exceeds the model's 128-tool cap, so 265 tools were dropped.
+
+**Fix applied 2026-11-25:** `%APPDATA%\Code\User\mcp.json` now sets `"disabled": true` on the
+`vercel` server. Backup at `mcp.json.backup-20261125`.
+
+**Do not** edit `workspaceStorage\...\state.vscdb` while VS Code is running — it is held open
+and will be overwritten on exit. Use `mcp.json` or the Extensions → MCP view instead.
+
+To re-enable Vercel tools for a single session: remove `"disabled": true`, or use
+`Configure Tools` in the chat tool picker to select only the tools you need.
