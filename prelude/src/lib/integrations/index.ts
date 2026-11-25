@@ -6,7 +6,9 @@
 // live.
 
 import { DemoAdapter } from './demo.ts'
+import { ExaAdapter } from './exa.ts'
 import { NotionAdapter } from './notion.ts'
+import { ResendAdapter } from './resend.ts'
 import { SlackAdapter } from './slack.ts'
 import type { IntegrationProvider } from './types.ts'
 
@@ -28,6 +30,16 @@ export function createRegistry(env: NodeJS.ProcessEnv = process.env): Registry {
   }
   if (env.SLACK_TOKEN) {
     adapters.push(new SlackAdapter(env.SLACK_TOKEN, env.SLACK_CHANNEL ?? ''))
+  }
+  if (env.RESEND_API_KEY) {
+    adapters.push(
+      new ResendAdapter(env.RESEND_API_KEY, env.RESEND_FROM ?? '', env.RESEND_TO ?? ''),
+    )
+  }
+  // Exa is read-only, so it is registered for search but never chosen for a
+  // write. `forChannel` only matches on id, and no action targets 'exa'.
+  if (env.EXA_API_KEY) {
+    adapters.push(new ExaAdapter(env.EXA_API_KEY))
   }
 
   return {

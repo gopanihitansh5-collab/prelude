@@ -67,20 +67,41 @@ function titleOf(props: Record<string, NotionProperty>): string {
 }
 
 function dateOf(props: Record<string, NotionProperty>): { start: string; end?: string } | null {
-  const byType = findProp(props, (_name, prop) => prop.type === 'date' || Boolean(prop.date))
-  const prop = byType?.[1] ?? findProp(props, (name) => /date|when|time/i.test(name))?.[1]
-  const start = prop?.date?.start
+  // Notion databases routinely carry several date properties ("Due date",
+  // "Follow-up", "Meeting date"). Take the first one that actually has a start,
+  // not merely the first date-typed one — an empty earlier property must not
+  // shadow a valid later one.
+  const candidates = entries(props)
+    .filter(([, prop]) => prop.type === 'date' || Boolean(prop.date))
+    .map(([, prop]) => prop)
+
+  for (const prop of candidates) {
+    const start = prop.date?.start
+    if (start) {
+      const end = prop.date?.end
+      return end ? { start, end } : { start }
+    }
+  }
+
+  const byName = findProp(props, (name) => /date|when|time/i.test(name))?.[1]
+  const start = byName?.date?.start
   if (!start) return null
-  const end = prop?.date?.end
+  const end = byName?.date?.end
   return end ? { start, end } : { start }
 }
 
 function attendeesOf(props: Record<string, NotionProperty>): Person[] {
-  const peopleProp = findProp(props, (_name, prop) => prop.type === 'people' || Boolean(prop.people))
-  if (peopleProp) {
-    return (peopleProp[1].people ?? [])
+  // Same first-match-wins hazard as dateOf: an empty people property must not
+  // hide a populated one.
+  const peopleProps = entries(props)
+    .filter(([, prop]) => prop.type === 'people' || Boolean(prop.people))
+    .map(([, prop]) => prop)
+
+  for (const prop of peopleProps) {
+    const people = (prop.people ?? [])
       .map((p) => ({ name: (p.name ?? p.id ?? '').trim() }))
       .filter((p) => p.name.length > 0)
+    if (people.length > 0) return people
   }
 
   const textProp = findProp(props, (name, prop) =>
@@ -137,8 +158,12 @@ export function mapNotionPage(page: NotionPage): Meeting | null {
   if (!title || !date) return null
 
   const startsAt = date.start
-  const endsAt =
-    date.end ?? new Date(Date.parse(startsAt) + DEFAULT_DURATION_MIN * 60_000).toISOString()
+  const startMs = Date.parse(startsAt)
+  // A present-but-malformed date must not throw out of a total function: one bad
+  // page would otherwise 500 the whole briefs route.
+  if (Number.isNaN(startMs)) return null
+
+  const endsAt = date.end ?? new Date(startMs + DEFAULT_DURATION_MIN * 60_000).toISOString()
 
   return {
     id: page.id,

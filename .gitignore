@@ -22,6 +22,9 @@ yarn-error.log*
 .env.production
 .env.development
 new.api
+api key.txt
+*api*key*.txt
+*apikey*.txt
 *.pem
 *.key
 

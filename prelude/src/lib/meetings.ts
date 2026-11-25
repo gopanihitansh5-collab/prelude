@@ -1,6 +1,7 @@
 import { demoMeetings } from '@/core/fixtures'
 import { meetingsFromNotionPages, type NotionPage } from '@/core/notion-map'
 import type { Meeting } from '@/core/types'
+import { enrichMeetings } from './enrich.ts'
 
 const NOTION_VERSION = '2022-06-28'
 const NOTION_BASE = 'https://api.notion.com/v1'
@@ -79,12 +80,43 @@ export async function getMeetings(): Promise<MeetingsResult> {
 
   const meetings = meetingsFromNotionPages(result.pages)
   if (meetings.length === 0) {
+    // The query succeeded, so this is genuinely live — the database is simply
+    // empty (or has no pages with both a title and a date). Reporting `demo`
+    // here would be a lie, and would show fixtures for a connected workspace.
     return {
-      meetings: demoMeetings(),
-      mode: 'demo',
-      note: 'notion returned no pages with a title and a date',
+      meetings: [],
+      mode: 'live',
+      note:
+        result.pages.length === 0
+          ? 'notion database is empty'
+          : `notion returned ${result.pages.length} page(s), none with both a title and a date`,
     }
   }
 
   return { meetings, mode: 'live' }
+}
+
+/**
+ * The read path the app actually uses.
+ *
+ * `getMeetings()` answers "what do I know locally". This answers "what should
+ * the lens show", which is the same list plus a web fallback for meetings that
+ * would otherwise render an empty card. Enrichment is best-effort: a failure
+ * returns the local list unchanged.
+ */
+export async function getBriefedMeetings(): Promise<MeetingsResult & { enriched: number }> {
+  const local = await getMeetings()
+  if (local.meetings.length === 0) return { ...local, enriched: 0 }
+
+  const { meetings, enrichedCount, notes } = await enrichMeetings(local.meetings, {
+    selfName: 'You',
+  })
+
+  return {
+    meetings,
+    mode: local.mode,
+    enriched: enrichedCount,
+    ...(local.note ? { note: local.note } : {}),
+    ...(notes.length > 0 && enrichedCount === 0 ? { note: notes[0] } : {}),
+  }
 }

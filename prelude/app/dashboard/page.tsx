@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getMeetings } from '@/lib/meetings'
 import { buildBrief } from '@/core/brief'
 import { rankActions } from '@/core/actions'
+import { llmConfigured } from '@/lib/llm'
 
 export const dynamic = 'force-dynamic'
 
@@ -87,8 +88,8 @@ export default async function DashboardPage() {
             </div>
             <div className="row">
               <span className="row-sub">LLM routing</span>
-              <span className={`pill ${process.env.OPENROUTER_API_KEY ? 'live' : ''}`}>
-                {process.env.OPENROUTER_API_KEY ? 'OpenRouter' : 'keyword rules'}
+              <span className={`pill ${llmConfigured() ? 'live' : ''}`}>
+                {llmConfigured() ? 'TokenRouter' : 'keyword rules'}
               </span>
             </div>
           </div>
