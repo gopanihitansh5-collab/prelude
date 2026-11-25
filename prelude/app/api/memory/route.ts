@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { recall } from '@/core/memory'
-import { demoMeetings } from '@/core/fixtures'
+import { getBriefedMeetings } from '@/lib/meetings'
 import type { SourceItem } from '@/lib/integrations/types'
 
 export const dynamic = 'force-dynamic'
@@ -11,9 +11,10 @@ export const dynamic = 'force-dynamic'
  * The spec's example: "Have we discussed the enterprise pricing before?"
  * → YES · 2 discussions / Last: Nov 22 / ...
  *
- * Today the index is built from the meeting threads. When the adapters are
- * wired to real providers, this route feeds their `search()` results into the
- * same `recall()` function — the answer shape does not change.
+ * The index is built from the meetings the app actually has — live Notion pages
+ * when a database is configured, fixtures otherwise. When the adapters are wired
+ * to real providers, this route feeds their `search()` results into the same
+ * `recall()` function; the answer shape does not change.
  */
 export async function GET(request: Request) {
   const url = new URL(request.url)
@@ -22,7 +23,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, error: 'q is required' }, { status: 400 })
   }
 
-  const index: SourceItem[] = demoMeetings().flatMap((meeting) =>
+  const { meetings, mode } = await getBriefedMeetings()
+
+  const index: SourceItem[] = meetings.flatMap((meeting) =>
     meeting.thread.map((message, i) => ({
       id: `${meeting.id}-${i}`,
       provider: meeting.channel,
@@ -35,5 +38,5 @@ export async function GET(request: Request) {
   )
 
   const answer = recall(index, query, Date.now())
-  return NextResponse.json({ ok: true, query, ...answer })
+  return NextResponse.json({ ok: true, query, mode, ...answer })
 }

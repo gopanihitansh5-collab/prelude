@@ -40,26 +40,47 @@ export default function LensPage() {
   })
 
   useEffect(() => {
-    const controller = new Controller(demoMeetings(), Date.now(), {
-      apiBase,
-      onState: (next) => {
-        setState(next)
-        if (next.receipt) setReceiptJson(JSON.stringify(next.receipt, null, 2))
-      },
-      onListen: () => void voice.start(),
-      onRecall: () => controller.dispatch({ type: 'memory', query: '' }),
-    })
-    controllerRef.current = controller
-    setState(controller.getState())
+    let cancelled = false
 
-    if (apiBase) void controller.refresh()
+    // The lens must show the same meetings the server has — live Notion pages
+    // when a database is configured, fixtures otherwise. Fetching here rather
+    // than importing fixtures keeps the mirror honest.
+    const boot = async () => {
+      let meetings = demoMeetings()
+      try {
+        const res = await fetch(`${apiBase}/api/briefs`, { cache: 'no-store' })
+        if (res.ok) {
+          const body = (await res.json()) as { meetings?: typeof meetings }
+          if (Array.isArray(body.meetings) && body.meetings.length > 0) {
+            meetings = body.meetings
+          }
+        }
+      } catch {
+        /* offline or no server: fixtures are the correct fallback */
+      }
+      if (cancelled) return
 
-    Promise.race([
-      controller.attach(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('no bridge')), 3000)),
-    ]).catch(() => {
-      /* browser mirror mode — expected outside the Even app */
-    })
+      const controller = new Controller(meetings, Date.now(), {
+        apiBase,
+        onState: (next) => {
+          setState(next)
+          if (next.receipt) setReceiptJson(JSON.stringify(next.receipt, null, 2))
+        },
+        onListen: () => void voice.start(),
+        onRecall: () => controller.dispatch({ type: 'memory', query: '' }),
+      })
+      controllerRef.current = controller
+      setState(controller.getState())
+
+      Promise.race([
+        controller.attach(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('no bridge')), 3000)),
+      ]).catch(() => {
+        /* browser mirror mode — expected outside the Even app */
+      })
+    }
+
+    void boot()
 
     const KEY_MAP: Record<string, Input> = {
       ArrowUp: { type: 'up' },
@@ -74,15 +95,19 @@ export default function LensPage() {
       const input = KEY_MAP[event.key]
       if (!input) return
       event.preventDefault()
-      controller.dispatch(input)
+      controllerRef.current?.dispatch(input)
       if (input.type === 'long_press') {
-        setTimeout(() => controller.dispatch({ type: 'long_press_release' }), 400)
+        setTimeout(() => controllerRef.current?.dispatch({ type: 'long_press_release' }), 400)
       }
     }
     window.addEventListener('keydown', onKey)
-    const tick = setInterval(() => controller.dispatch({ type: 'tick', now: Date.now() }), 30_000)
+    const tick = setInterval(
+      () => controllerRef.current?.dispatch({ type: 'tick', now: Date.now() }),
+      30_000,
+    )
 
     return () => {
+      cancelled = true
       window.removeEventListener('keydown', onKey)
       clearInterval(tick)
     }

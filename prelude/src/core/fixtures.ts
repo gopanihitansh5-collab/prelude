@@ -27,6 +27,13 @@ export function demoMeetings(): Meeting[] {
           at: iso(-42),
         },
         { from: 'You', text: 'Sent the updated sheet, tab 3.', at: iso(-120) },
+        // A promise the user made, so the follow-up radar has something real to
+        // show. Without this the signature feature renders empty in the demo.
+        {
+          from: 'You',
+          text: "I'll send the revised enterprise pricing by Wednesday.",
+          at: iso(-180),
+        },
       ],
       doc: { title: 'Pricing v3', touchedAt: iso(-180) },
       agenda: [
@@ -62,6 +69,13 @@ export function demoMeetings(): Meeting[] {
       ],
       thread: [
         { from: 'Katherine', text: 'Can you send the retention cohort before we meet?', at: iso(-300) },
+        // A second promise, so the radar shows more than one row and the
+        // ordering (overdue first, then by due date) is visible.
+        {
+          from: 'You',
+          text: "I'll share the use-of-funds breakdown by Friday.",
+          at: iso(-420),
+        },
       ],
       doc: { title: 'Series A deck', touchedAt: iso(-1440) },
       agenda: [

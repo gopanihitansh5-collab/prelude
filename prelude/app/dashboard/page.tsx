@@ -75,9 +75,15 @@ export default async function DashboardPage() {
               </span>
             </div>
             <div className="row">
-              <span className="row-sub">Slack</span>
-              <span className={`pill ${process.env.SLACK_TOKEN ? 'live' : ''}`}>
-                {process.env.SLACK_TOKEN ? 'connected' : 'not connected'}
+              <span className="row-sub">Email (Resend)</span>
+              <span className={`pill ${process.env.RESEND_API_KEY ? 'live' : ''}`}>
+                {process.env.RESEND_API_KEY ? 'connected' : 'not connected'}
+              </span>
+            </div>
+            <div className="row">
+              <span className="row-sub">Web (Exa)</span>
+              <span className={`pill ${process.env.EXA_API_KEY ? 'live' : ''}`}>
+                {process.env.EXA_API_KEY ? 'connected' : 'not connected'}
               </span>
             </div>
             <div className="row">
@@ -92,6 +98,11 @@ export default async function DashboardPage() {
                 {llmConfigured() ? 'TokenRouter' : 'keyword rules'}
               </span>
             </div>
+            <div className="controls">
+              <Link href="/connections">
+                <button type="button">All connections →</button>
+              </Link>
+            </div>
           </div>
 
           <div className="card">
@@ -104,6 +115,14 @@ export default async function DashboardPage() {
             <p className="row-sub" style={{ marginTop: 10 }}>
               Mode: <span className={`pill ${mode === 'live' ? 'live' : ''}`}>{mode}</span>
             </p>
+            <div className="controls">
+              <Link href="/actions">
+                <button type="button">Action history →</button>
+              </Link>
+              <Link href="/memory">
+                <button type="button">Memory →</button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

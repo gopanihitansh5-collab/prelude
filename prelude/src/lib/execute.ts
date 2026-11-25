@@ -32,9 +32,30 @@ export interface ExecuteRequest {
   confirmed?: boolean
 }
 
-/** In-memory store. A real deployment swaps this for Postgres; the shape holds. */
-const actions = new Map<string, ActionRecord>()
-const byIdempotencyKey = new Map<string, string>()
+/**
+ * In-memory store. A real deployment swaps this for Postgres; the shape holds.
+ *
+ * Held on `globalThis` deliberately. Next.js can evaluate a route module more
+ * than once (dev HMR, and separate module graphs per route), so a plain
+ * module-level Map would give `/api/act` and `/api/actions` different stores —
+ * a write would vanish from the history page. A global survives that.
+ */
+interface ActionStore {
+  actions: Map<string, ActionRecord>
+  byIdempotencyKey: Map<string, string>
+}
+
+const globalForActions = globalThis as unknown as { __preludeActions?: ActionStore }
+
+const store: ActionStore =
+  globalForActions.__preludeActions ??
+  (globalForActions.__preludeActions = {
+    actions: new Map<string, ActionRecord>(),
+    byIdempotencyKey: new Map<string, string>(),
+  })
+
+const actions = store.actions
+const byIdempotencyKey = store.byIdempotencyKey
 
 /**
  * Cap the store so a long-running process cannot grow without bound.
@@ -69,6 +90,19 @@ function newId(): string {
 
 export function getAction(id: string): ActionRecord | null {
   return actions.get(id) ?? null
+}
+
+/**
+ * Every action this process has executed, newest first.
+ *
+ * The dashboard's /actions page reads this. It is deliberately a snapshot of the
+ * in-memory store: a real deployment would page a Postgres table, but the shape
+ * is the same and the page does not change.
+ */
+export function listActions(limit = 50): ActionRecord[] {
+  return [...actions.values()]
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+    .slice(0, limit)
 }
 
 export function resetActions(): void {
