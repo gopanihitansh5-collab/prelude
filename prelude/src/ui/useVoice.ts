@@ -2,6 +2,7 @@
 
 import { useCallback, useRef } from 'react'
 import { connect } from '@/even/bridge'
+import { startBrowserCapture, type Capture } from './browser-capture'
 import type { VoiceState } from '@/core/voice'
 
 /**
@@ -44,12 +45,19 @@ export function useVoice({ apiBase, onState, onProposal, onError }: UseVoiceOpti
   const chunks = useRef<Uint8Array[]>([])
   const recording = useRef(false)
   const unsubscribe = useRef<(() => void) | null>(null)
+  const browserCapture = useRef<Capture | null>(null)
 
   const stop = useCallback(async () => {
     if (!recording.current) return
     recording.current = false
     unsubscribe.current?.()
     unsubscribe.current = null
+
+    // Close whichever capture path was open.
+    if (browserCapture.current) {
+      await browserCapture.current.stop().catch(() => undefined)
+      browserCapture.current = null
+    }
 
     try {
       const bridge = await connect()
@@ -114,28 +122,61 @@ export function useVoice({ apiBase, onState, onProposal, onError }: UseVoiceOpti
       return
     }
 
+    // Two capture paths, one state machine.
+    //
+    // The glasses path uses the SDK bridge. A plain browser has no bridge, so it
+    // falls back to getUserMedia and resamples to the same 16 kHz s16le the G2
+    // emits — which means /api/stt receives identical bytes either way, and the
+    // browser mirror is a real test of the voice path rather than a mock.
+    let bridge: Awaited<ReturnType<typeof connect>> | null = null
     try {
-      const bridge = await connect()
-      // The glasses mic requires the startup page to exist first.
-      const ok = await bridge.audioControl(true)
-      if (!ok) {
+      bridge = await connect()
+    } catch {
+      bridge = null
+    }
+
+    if (bridge) {
+      try {
+        const ok = await bridge.audioControl(true)
+        if (!ok) {
+          onError('microphone unavailable')
+          return
+        }
+
+        chunks.current = []
+        recording.current = true
+        onState('listening')
+
+        unsubscribe.current = bridge.onEvenHubEvent((event) => {
+          const pcm = event.audioEvent?.audioPcm
+          if (!pcm || !recording.current) return
+          const total = chunks.current.reduce((sum, c) => sum + c.byteLength, 0)
+          if (total + pcm.byteLength > MAX_PCM_BYTES) return
+          chunks.current.push(pcm)
+        })
+        return
+      } catch {
         onError('microphone unavailable')
         return
       }
+    }
 
+    // Browser fallback.
+    try {
       chunks.current = []
+      const capture = await startBrowserCapture({
+        onChunk: (pcm) => {
+          if (!recording.current) return
+          const total = chunks.current.reduce((sum, c) => sum + c.byteLength, 0)
+          if (total + pcm.byteLength > MAX_PCM_BYTES) return
+          chunks.current.push(pcm)
+        },
+      })
+      browserCapture.current = capture
       recording.current = true
       onState('listening')
-
-      unsubscribe.current = bridge.onEvenHubEvent((event) => {
-        const pcm = event.audioEvent?.audioPcm
-        if (!pcm || !recording.current) return
-        const total = chunks.current.reduce((sum, c) => sum + c.byteLength, 0)
-        if (total + pcm.byteLength > MAX_PCM_BYTES) return
-        chunks.current.push(pcm)
-      })
-    } catch {
-      onError('no microphone in this environment')
+    } catch (err) {
+      onError(err instanceof Error ? err.message : 'no microphone in this environment')
     }
   }, [onError, onState, stop])
 
