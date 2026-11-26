@@ -280,7 +280,10 @@ export class Controller {
       const res = await fetch(`${this.apiBase}/api/act`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ meetingId, action: kind, text: payload }),
+        // The act effect only fires from a user tap (actions/note) or a voice
+        // action that reached `confirmed` through review, so this request *is*
+        // the confirmation. The server requires the field explicitly.
+        body: JSON.stringify({ meetingId, action: kind, text: payload, confirmed: true }),
       })
       if (!res.ok) {
         return {

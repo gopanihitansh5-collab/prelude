@@ -97,11 +97,20 @@ export function recall(index: SourceItem[], query: string, nowMs: number, limit 
   return { headline, latest, hits: hits.slice(0, limit), empty: false }
 }
 
-/** "Nov 22" — short enough for the lens. */
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+/**
+ * "Nov 22" — short enough for the lens.
+ *
+ * Deliberately not `toLocaleDateString`: that depends on the host's ICU data and
+ * locale, so the same input can render differently in a test worker than in the
+ * browser. A fixed month table makes this a pure function.
+ */
 export function shortDate(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return '--'
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const month = MONTHS[d.getUTCMonth()] ?? '???'
+  return `${month} ${d.getUTCDate()}`
 }
 
 /**

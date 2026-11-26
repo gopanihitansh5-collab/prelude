@@ -28,6 +28,10 @@ api key.txt
 *.pem
 *.key
 
+# ── Local reference material ───────────────────────────────────────────────
+# Contains plaintext Neon/S3 credentials in Neon Console.txt. Never commit.
+images_ref/
+
 # ── Installed agent skills (third-party content, not our code) ─────────────
 .agents/
 .claude/

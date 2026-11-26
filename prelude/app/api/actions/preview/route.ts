@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { validateAction, createAction } from '@/core/action-lifecycle'
 import type { ActionKind } from '@/core/action-lifecycle'
-import { demoMeetings } from '@/core/fixtures'
+import { getMeetings } from '@/lib/meetings'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,7 +24,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: 'meetingId and action are required' }, { status: 400 })
   }
 
-  const meeting = demoMeetings().find((m) => m.id === body.meetingId)
+  const { meetings } = await getMeetings()
+  const meeting = meetings.find((m) => m.id === body.meetingId)
   const record = createAction({
     id: 'preview',
     kind: body.action,

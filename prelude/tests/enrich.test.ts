@@ -59,9 +59,33 @@ describe('enrichMeeting', () => {
   })
 
   it('never throws when the provider is unreachable', async () => {
-    const result = await enrichMeeting(meeting(), { apiKey: 'invalid-key', now: NOW })
-    expect(result.enriched).toBe(false)
-    expect(result.meeting.title).toBe('Intro call')
+    // Stub fetch: a real network call makes this test depend on DNS, latency
+    // and the provider's rate limiter, which is why it was flaky.
+    const originalFetch = globalThis.fetch
+    globalThis.fetch = (async () => {
+      throw new Error('network down')
+    }) as typeof fetch
+
+    try {
+      const result = await enrichMeeting(meeting(), { apiKey: 'invalid-key', now: NOW })
+      expect(result.enriched).toBe(false)
+      expect(result.meeting.title).toBe('Intro call')
+    } finally {
+      globalThis.fetch = originalFetch
+    }
+  })
+
+  it('never throws when the provider returns a non-ok status', async () => {
+    const originalFetch = globalThis.fetch
+    globalThis.fetch = (async () => new Response('nope', { status: 401 })) as typeof fetch
+
+    try {
+      const result = await enrichMeeting(meeting(), { apiKey: 'invalid-key', now: NOW })
+      expect(result.enriched).toBe(false)
+      expect(result.meeting.title).toBe('Intro call')
+    } finally {
+      globalThis.fetch = originalFetch
+    }
   })
 })
 

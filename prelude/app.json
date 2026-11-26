@@ -9,7 +9,7 @@
     {
       "name": "network",
       "desc": "Fetches your meeting briefs and sends the action you confirm, through the Prelude backend.",
-      "whitelist": ["https://prelude-brief.fly.dev"]
+      "whitelist": ["https://prelude-green.vercel.app"]
     },
     {
       "name": "g2-microphone",

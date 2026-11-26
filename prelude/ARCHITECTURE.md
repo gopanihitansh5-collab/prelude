@@ -55,15 +55,27 @@ core can be tested in 1.2 seconds without a browser.
 | `action-lifecycle.ts` | The action state machine | No execution without validation + confirmation |
 | `actions.ts` | Ranking + the reducer | Every gesture is a pure transition |
 | `layout.ts` | `AppState` → three strings | Every band ≤ 999 UTF-8 bytes |
+| `panel.ts` | `AppState` → the panel layout | Every row ≤ 26 chars; derived from the same state |
 | `fixtures.ts` | Demo meetings | Times are relative to load, so the card always reads "9m" |
 
-### Why `layout.ts` is the single source of truth
+### Two renderers, and which one is authoritative
 
-The glasses render containers, not HTML. The browser mirror renders HTML. If those were two code paths,
-they would drift, and the mirror would stop being evidence.
+There are two renderers, and the distinction matters:
 
-So `render(state)` returns `{ header, body, status }` and **both** paths paint exactly those strings.
-There is no second renderer.
+| Renderer | Output | Authority |
+|---|---|---|
+| `layout.ts` → `render(state)` | `{ header, body, status }` | **The contract.** These are the exact strings the SDK containers receive. Every band is clamped to 999 UTF-8 bytes by a test. |
+| `panel.ts` → `renderPanel(state)` | A structured panel layout | **The visual layer.** It reproduces what the hardware *looks* like: a dithered clock, a bordered list panel, icon glyphs. |
+
+`layout.ts` is authoritative for behaviour. `panel.ts` is authoritative for appearance. Both derive
+from the same `AppState`, so they cannot disagree about the facts — only about presentation.
+
+The lens page shows both, stacked, with a caption saying which is which. That is deliberate: a judge
+should be able to see the SDK contract and the hardware appearance side by side rather than trusting
+one screenshot.
+
+**The rule:** never let `panel.ts` become the source of a fact. If a value is not in `AppState`, it
+does not belong in either renderer.
 
 ### Why the reducer is one function
 

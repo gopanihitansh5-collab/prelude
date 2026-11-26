@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params
-  const record = getAction(id)
+  const record = await getAction(id)
   if (!record) {
     return NextResponse.json({ ok: false, error: 'unknown action' }, { status: 404 })
   }

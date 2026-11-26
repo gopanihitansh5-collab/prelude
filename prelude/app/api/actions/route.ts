@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { listActions } from '@/lib/execute'
+import { actionStoreIsDurable, listActions } from '@/lib/execute'
 import { requireActKey } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
@@ -15,7 +15,8 @@ export const dynamic = 'force-dynamic'
  * exact text that was delivered, so an operator who protects writes must not
  * have that text readable through an open read route.
  *
- * The store is in-memory: a restart clears it. That is documented, not hidden.
+ * The store is Postgres when DATABASE_URL is set, in-memory otherwise. Which one
+ * is live is reported in the response, not hidden.
  */
 export async function GET(request: Request) {
   const auth = requireActKey(request.headers)
@@ -23,11 +24,13 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, error: auth.reason }, { status: 401 })
   }
 
-  const actions = listActions()
+  const actions = await listActions()
+  const durable = actionStoreIsDurable()
   return NextResponse.json({
     ok: true,
     count: actions.length,
     actions,
-    note: 'in-memory store; cleared on restart',
+    durable,
+    note: durable ? 'durable store; survives a restart' : 'in-memory store; cleared on restart',
   })
 }

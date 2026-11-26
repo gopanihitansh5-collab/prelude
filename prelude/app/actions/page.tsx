@@ -1,5 +1,5 @@
 import { Shell } from '../components/shell'
-import { listActions } from '@/lib/execute'
+import { actionStoreIsDurable, listActions } from '@/lib/execute'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,11 +10,12 @@ export const dynamic = 'force-dynamic'
  * real, what status each attempt reached, and what the provider returned. The
  * status vocabulary is the lifecycle's own, not a friendlier paraphrase.
  *
- * The store is in-memory, so a restart clears it. That is stated on the page
- * rather than hidden.
+ * The store is Postgres when DATABASE_URL is set, in-memory otherwise. Which one
+ * is live is stated on the page rather than hidden.
  */
 export default async function ActionsPage() {
-  const actions = listActions()
+  const actions = await listActions()
+  const durable = actionStoreIsDurable()
 
   const statusColor = (status: string): string => {
     if (status === 'receipt_persisted' || status === 'provider_confirmed') return 'var(--green)'
@@ -34,7 +35,10 @@ export default async function ActionsPage() {
         {actions.length === 0 ? (
           <p className="row-sub" style={{ margin: 0 }}>
             No actions yet. Open the <a href="/lens">lens</a> and tap an action, or POST to{' '}
-            <code>/api/act</code>. The store is in-memory, so a restart clears it.
+            <code>/api/act</code>.{' '}
+            {durable
+              ? 'The store is Postgres, so history survives a restart.'
+              : 'The store is in-memory, so a restart clears it.'}
           </p>
         ) : (
           actions.map((action) => (

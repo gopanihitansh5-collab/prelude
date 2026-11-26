@@ -743,6 +743,76 @@
   white-space: pre;
 }
 
+/* ── the comparison table ───────────────────────────────────────────────── */
+
+.xp-compare {
+  margin-top: clamp(32px, 5vw, 56px);
+  border: 1px solid var(--edge);
+  border-radius: 14px;
+  overflow: hidden;
+  max-width: 720px;
+}
+
+.xp-compare-head,
+.xp-compare-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px 110px;
+  gap: 12px;
+  align-items: center;
+  padding: 13px 18px;
+  font-size: 13.5px;
+}
+
+.xp-compare-head {
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--edge);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.xp-compare-head span:not(:first-child) {
+  text-align: center;
+}
+
+.xp-compare-row {
+  border-bottom: 1px solid var(--edge);
+  color: var(--ink-dim);
+}
+
+.xp-compare-row:last-child {
+  border-bottom: 0;
+}
+
+.xp-compare-label {
+  color: var(--ink);
+}
+
+.xp-compare-row span:not(:first-child) {
+  text-align: center;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 15px;
+}
+
+.xp-compare-row span[data-on='true'] {
+  color: var(--emerald);
+}
+
+.xp-compare-row span[data-on='false'] {
+  color: var(--ink-faint);
+}
+
+@media (max-width: 620px) {
+  .xp-compare-head,
+  .xp-compare-row {
+    grid-template-columns: minmax(0, 1fr) 64px 64px;
+    gap: 8px;
+    padding: 11px 14px;
+    font-size: 12.5px;
+  }
+}
+
 /* ── numbers ────────────────────────────────────────────────────────────── */
 
 .xp-numbers {

@@ -22,3 +22,4 @@ Thumbs.db
 # Credentials scratch file — never commit
 new.api
 ../new.api
+.vercel

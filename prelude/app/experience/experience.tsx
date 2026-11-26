@@ -162,29 +162,29 @@ export function Experience({
 
           <h1 className="xp-display">
             <span className="row">
-              <span>Your work.</span>
+              <span>Your glasses</span>
             </span>
             <span className="row">
-              <span className="dim">One glance</span>
+              <span className="dim">can read.</span>
             </span>
             <span className="row">
-              <span className="glow">ahead.</span>
+              <span className="glow">Prelude writes.</span>
             </span>
           </h1>
 
           <p className="xp-lede">
-            Nine minutes out. You need four facts and one action. Prelude puts them on your glasses
-            — <strong>who</strong>, what they last said, the doc you touched, the agenda — and one
-            tap sends a real reply. The lens then shows{' '}
-            <strong>the exact string that was delivered</strong>.
+            Even&apos;s own Conversate already summarises your meetings. Prelude does the thing it
+            cannot: <strong>it acts</strong>. One tap sends a real reply to Notion, email or Slack —
+            and the lens shows <strong>the exact string the provider confirmed</strong>. Not a
+            summary. A receipt.
           </p>
 
           <div className="xp-actions">
             <Link href="/lens" className="xp-btn xp-btn-primary">
-              Explore Prelude
+              See the write path
             </Link>
             <a href="#roundtrip" className="xp-btn xp-btn-ghost">
-              See how it works
+              How the receipt works
             </a>
           </div>
 
@@ -223,18 +223,40 @@ export function Experience({
         <div className="xp-fallback-glow" />
 
         <div className="chapter-inner">
-          <p className="xp-label xp-reveal">03 · The intelligence engine</p>
+          <p className="xp-label xp-reveal">03 · Why not just use Conversate?</p>
           <h2 className="xp-title xp-reveal">
-            It remembers <span className="dim">what matters.</span>
+            It reads. <span className="dim">Prelude writes.</span>
           </h2>
           <p className="xp-body xp-reveal">
-            People, conversations, meetings, documents, decisions and commitments become one
-            connected layer. Commitment detection is deterministic — an LLM may propose one, but the
-            rules that decide whether it is open are code, so they can be tested and cannot drift
-            with a model change.
+            Even&apos;s first-party app is good at capture: prep notes, AI cues, summaries. It stops
+            at the edge of the Even app. Prelude starts there — it writes back to the tools your
+            work actually lives in, and proves it did.
           </p>
-          <p className="xp-body xp-reveal" style={{ marginTop: 16, fontSize: 13, opacity: 0.7 }}>
-            Hover a node to see what it holds.
+
+          <div className="xp-compare">
+            <div className="xp-compare-head">
+              <span />
+              <span>Conversate</span>
+              <span>Prelude</span>
+            </div>
+            {[
+              ['Prep notes before a meeting', true, true],
+              ['AI cues and summaries', true, true],
+              ['Writes to Notion, email, Slack', false, true],
+              ['Provider-confirmed receipt', false, true],
+              ['Commitment tracking with deadlines', false, true],
+              ['Your tools, not a silo', false, true],
+            ].map(([label, conversate, prelude]) => (
+              <div className="xp-compare-row" key={String(label)}>
+                <span className="xp-compare-label">{label}</span>
+                <span data-on={conversate ? 'true' : 'false'}>{conversate ? '✓' : '—'}</span>
+                <span data-on={prelude ? 'true' : 'false'}>{prelude ? '✓' : '—'}</span>
+              </div>
+            ))}
+          </div>
+
+          <p className="xp-body xp-reveal" style={{ marginTop: 20, fontSize: 13, opacity: 0.7 }}>
+            Hover a node above to see what each one holds.
           </p>
         </div>
       </section>

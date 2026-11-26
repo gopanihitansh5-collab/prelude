@@ -1,0 +1,249 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   The G2 panel view.
+
+   Modelled on the real display: a green, pixel-dithered panel layout with a
+   large clock on the left and a bordered list on the right. The dotted texture
+   comes from a repeating radial gradient, which is what the hardware's pixel
+   grid looks like at this scale.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.g2-panel {
+  --g2-green: #7dffa8;
+  --g2-dim: #3f8a5c;
+  --g2-faint: #1e3a29;
+
+  position: relative;
+  width: 576px;
+  height: 288px;
+  background: #000;
+  color: var(--g2-green);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(125, 255, 168, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.9),
+    0 30px 80px -20px rgba(0, 0, 0, 0.9),
+    0 0 80px -20px rgba(125, 255, 168, 0.25);
+  /* The pixel grid. */
+  background-image: radial-gradient(rgba(125, 255, 168, 0.09) 0.5px, transparent 0.5px);
+  background-size: 3px 3px;
+}
+
+@media (max-width: 640px) {
+  .g2-panel {
+    width: 100%;
+    max-width: 576px;
+    height: auto;
+    aspect-ratio: 2 / 1;
+  }
+}
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+
+.g2-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--g2-green);
+}
+
+.g2-date {
+  opacity: 0.9;
+}
+
+.g2-battery {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.g2-battery-shell {
+  display: inline-flex;
+  gap: 1px;
+  padding: 2px;
+  border: 1px solid var(--g2-dim);
+  border-radius: 2px;
+}
+
+.g2-battery-shell i {
+  display: block;
+  width: 3px;
+  height: 7px;
+  background: var(--g2-faint);
+}
+
+.g2-battery-shell i[data-on='true'] {
+  background: var(--g2-green);
+}
+
+.g2-battery-nub {
+  width: 2px;
+  height: 4px;
+  background: var(--g2-dim);
+  border-radius: 0 1px 1px 0;
+}
+
+/* ── left column: the clock ─────────────────────────────────────────────── */
+
+.g2-left {
+  position: absolute;
+  top: 34px;
+  left: 14px;
+  width: 150px;
+}
+
+.g2-clock {
+  display: grid;
+  gap: 2px;
+  font-size: 62px;
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--g2-green);
+  /* The dotted edge: a text-shadow grid reads as a pixel font at this size. */
+  text-shadow:
+    0 0 1px rgba(125, 255, 168, 0.9),
+    0 0 14px rgba(125, 255, 168, 0.35);
+}
+
+.g2-clock span {
+  display: block;
+}
+
+.g2-meta {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--g2-dim);
+}
+
+/* ── right column: the bordered list ────────────────────────────────────── */
+
+.g2-list {
+  position: absolute;
+  top: 30px;
+  right: 12px;
+  width: 372px;
+  max-height: 218px;
+  padding: 8px 10px;
+  border: 1px solid var(--g2-dim);
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.g2-list-title {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--g2-dim);
+  margin-bottom: 6px;
+}
+
+.g2-row {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 3px 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--g2-green);
+}
+
+.g2-icon {
+  flex: none;
+  width: 12px;
+  font-size: 10px;
+  color: var(--g2-dim);
+}
+
+.g2-row-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.g2-row-meta {
+  flex: none;
+  font-size: 10px;
+  color: var(--g2-dim);
+}
+
+/* ── status strip ───────────────────────────────────────────────────────── */
+
+.g2-status {
+  position: absolute;
+  left: 14px;
+  right: 12px;
+  bottom: 12px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border: 1px solid var(--g2-dim);
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--g2-green);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.g2-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.g2-wave i {
+  display: block;
+  width: 2px;
+  background: var(--g2-green);
+  animation: g2-wave 900ms ease-in-out infinite;
+}
+
+.g2-wave i:nth-child(1) {
+  height: 4px;
+  animation-delay: 0ms;
+}
+.g2-wave i:nth-child(2) {
+  height: 9px;
+  animation-delay: 120ms;
+}
+.g2-wave i:nth-child(3) {
+  height: 6px;
+  animation-delay: 240ms;
+}
+.g2-wave i:nth-child(4) {
+  height: 11px;
+  animation-delay: 360ms;
+}
+
+@keyframes g2-wave {
+  0%,
+  100% {
+    transform: scaleY(0.5);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g2-wave i {
+    animation: none;
+  }
+}

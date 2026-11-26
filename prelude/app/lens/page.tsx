@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller } from '@/even/app'
 import { demoMeetings } from '@/core/fixtures'
 import { render } from '@/core/layout'
+import { renderPanel } from '@/core/panel'
+import { PanelView } from '../components/panel-view'
 import type { AppState } from '@/core/types'
 import type { Input } from '@/core/actions'
 import { useVoice } from '@/ui/useVoice'
@@ -119,6 +121,7 @@ export default function LensPage() {
   }, [])
 
   const bands = state ? render(state) : { header: 'PRELUDE', body: 'loading…', status: '' }
+  const panel = state ? renderPanel(state) : null
 
   return (
     <main className="shell">
@@ -134,11 +137,19 @@ export default function LensPage() {
 
       <div className="grid">
         <div>
-          <div className="lens" aria-live="polite">
+          {/* The panel view: what the hardware actually looks like. */}
+          {panel ? <PanelView layout={panel} /> : null}
+
+          {/* The three-band output: what the SDK containers receive. */}
+          <div className="lens" aria-live="polite" style={{ marginTop: 16 }}>
             <div className="lens-band lens-header">{bands.header}</div>
             <div className="lens-band lens-body">{bands.body}</div>
             <div className="lens-band lens-status">{bands.status}</div>
           </div>
+          <p className="hint" style={{ marginTop: 8 }}>
+            Top: the panel layout the hardware renders. Bottom: the three-band strings the SDK
+            containers receive. Both come from the same state.
+          </p>
 
           <div className="controls">
             <button onClick={() => send({ type: 'up' })}>▲ up</button>
