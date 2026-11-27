@@ -12,7 +12,7 @@
 // tasks. Every one of those exists in src/core/types.ts or commitments.ts.
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 
