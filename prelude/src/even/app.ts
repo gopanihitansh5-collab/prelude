@@ -24,7 +24,7 @@ import { render } from '../core/layout.ts'
 import { initialState, reduce } from '../core/actions.ts'
 import type { Effect, Input } from '../core/actions.ts'
 import type { AppState, Meeting, Receipt } from '../core/types.ts'
-import { connect, eventTypeOf, isExitEvent, toInput } from './bridge.ts'
+import { connect, eventTypeOf, hasEvenHost, isExitEvent, toInput } from './bridge.ts'
 import type { EvenAppBridge } from './bridge.ts'
 import { MENU_ITEMS, startupPage, upgrades } from './containers.ts'
 import { createGate, SWIPE_GATE_MS, TAP_GATE_MS } from './gate.ts'
@@ -78,16 +78,33 @@ export class Controller {
    * `waitForEvenAppBridge()` never resolves in a plain browser, so the caller
    * races it against a timeout. In the browser the mirror still works; on
    * hardware the bridge wins the race.
+   *
+   * With no Even host there is no display to paint: the SDK talks to the
+   * glasses through a Flutter handler that only exists inside the Even app, and
+   * every display call fails without it. Calling anyway produced a red
+   * "createStartUpPageContainer failed: 1" in the browser console on every
+   * load — a hard error for a condition that is expected. So the call is
+   * skipped, once, and said out loud at info level; the page renders the same
+   * three strings through React, which is what the mirror is for.
    */
   async attach(): Promise<void> {
     this.bridge = await connect()
     this.restoreCheckpoint()
     const bands = render(this.state)
-    const result = await this.bridge.createStartUpPageContainer(startupPage(bands))
-    if (result !== 0) {
-      console.error('createStartUpPageContainer failed:', result)
-    }
     this.lastWritten = JSON.stringify(bands)
+
+    if (hasEvenHost()) {
+      const result = await this.bridge.createStartUpPageContainer(startupPage(bands))
+      if (result !== 0) {
+        console.error('createStartUpPageContainer failed:', result)
+      }
+    } else {
+      console.info(
+        '[prelude] no Even host — browser mirror mode. The display container is not created; ' +
+          'this page renders the same render(state) strings itself.',
+      )
+    }
+
     this.emit()
 
     this.bridge.onEvenHubEvent((event) => {

@@ -18,6 +18,25 @@ export async function connect(): Promise<EvenAppBridge> {
   return waitForEvenAppBridge()
 }
 
+/**
+ * True when the page is running inside the Even Realities app's WebView.
+ *
+ * The SDK sends everything — display writes, event subscriptions — through
+ * `window.flutter_inappwebview.callHandler(...)`. With no handler there is no
+ * channel at all, which is why the SDK itself warns "postMessage: Flutter
+ * handler not available" and why every display call fails in a plain browser.
+ *
+ * So this is not a heuristic: it is the exact property the SDK checks before it
+ * posts. When it is absent, skipping the display call cannot lose a frame that
+ * would otherwise have been painted — there is nobody to paint it.
+ */
+export function hasEvenHost(): boolean {
+  if (typeof window === 'undefined') return false
+  const host = (window as unknown as { flutter_inappwebview?: { callHandler?: unknown } })
+    .flutter_inappwebview
+  return Boolean(host && typeof host.callHandler === 'function')
+}
+
 /** Read the event type out of one envelope, resolving the CLICK default inside. */
 export function eventTypeOf(envelope?: { eventType?: OsEventTypeList }): OsEventTypeList | null {
   if (!envelope) return null
