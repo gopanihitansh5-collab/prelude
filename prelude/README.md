@@ -139,7 +139,7 @@ A misheard transcript can never send a message.
 | **Voice with mandatory review** | `transcribing → confirmed` is an illegal transition. Voice never sends on its own |
 | **Runs with zero secrets** | No token → fixtures, and the header says `demo`. The demo never depends on a credential |
 | **576×288 browser mirror** | A judge needs no glasses and no simulator to see it work |
-| **Pure, tested core** | `src/core/` imports no SDK, no DOM, no fetch — 271 unit tests across 19 files |
+| **Pure, tested core** | `src/core/` imports no SDK, no DOM, no fetch — 275 unit tests across 20 files |
 | **Firmware rules pinned by tests** | One event-capture container, unique z-order, ≤999 UTF-8 bytes per band, canvas bounds |
 | **Measured-hardware input rules** | Swipe gate 700 ms, tap gate 350 ms, no dependence on long press — each cites a finding ID |
 | **Debounced display writes** | One write in flight, one pending, newest wins — the BLE queue is ~83 ms per call |
@@ -160,7 +160,7 @@ A misheard transcript can never send a message.
 │     Next.js route handlers. No UI, no SDK.                           │
 ├──────────────────────────────────────────────────────────────────────┤
 │  3. INTELLIGENCE ENGINE            src/core/                         │
-│     Pure. No SDK, no DOM, no fetch. 271 tests.                       │
+│     Pure. No SDK, no DOM, no fetch. 275 tests.                       │
 │       types.ts            Meeting, Brief, Action, AppState           │
 │       format.ts           utf8Bytes, truncate, wrap, fitFields       │
 │       brief.ts            raw calendar+thread+doc → Brief            │
@@ -225,7 +225,7 @@ at <https://prelude-green.vercel.app>.
 
 | Check | Result |
 |---|---|
-| `npm test` | **271/271 pass**, 19 files |
+| `npm test` | **275/275 pass**, 20 files |
 | `npx tsc --noEmit` | clean |
 | `npm run gate` | **GATE PASS** — 5 stages |
 | `npm audit` | **0 vulnerabilities** |
@@ -254,7 +254,7 @@ npm run dev            # http://localhost:5173
 open http://localhost:5173/lens
 
 # Tests
-npm test               # 271 tests
+npm test               # 275 tests
 
 # The gate: typecheck → test → manifest → plugin build → app build
 npm run gate
@@ -371,7 +371,7 @@ by reading someone else's field notes.
 
 ### 5. A pure core that is actually testable
 
-271 unit tests run in a few seconds with no SDK, no browser and no network. The state machine is one pure
+275 unit tests run in a few seconds with no SDK, no browser and no network. The state machine is one pure
 reducer, so every gesture is a test case rather than a manual click-through.
 
 ### 6. Honest demo mode

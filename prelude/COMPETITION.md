@@ -161,7 +161,7 @@ Straight from our own `CHECKLIST.md` §L and the field evidence above:
   return 500 on the live URL (`CHECKLIST.md` §K/§L). A judge who clicks will find that first. Redeploy before
   submission — this is the single cheapest point we can recover.
 - **Not in the Best Telegram integration special prize.** Deliberate (D-01), but it is a prize we cannot win.
-- **The test count is not the argument.** 271 tests beat the visible field, but the field mostly does not compete
+- **The test count is not the argument.** 275 tests beat the visible field, but the field mostly does not compete
   on tests, and judges weight working behaviour at 20%, not test volume.
 
 ## The three-sentence pitch

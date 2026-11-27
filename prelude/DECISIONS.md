@@ -109,7 +109,7 @@ lifecycle event and audio frame fires the tap handler.
 
 ### D-13 · `src/core/` imports nothing
 **Decision.** No SDK, no DOM, no fetch in the core.
-**Why.** It makes the layout engine and the state machine testable in plain Node — 271 tests in a few seconds.
+**Why.** It makes the layout engine and the state machine testable in plain Node — 275 tests in a few seconds.
 It also makes the display budget provable rather than hoped for.
 **Cost.** The Even layer must translate between SDK types and core types.
 **Revisit if.** Never.

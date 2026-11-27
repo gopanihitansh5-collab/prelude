@@ -4,7 +4,7 @@ Live status of everything asked for and everything done.
 
 Legend: `[x]` done · `[~]` in progress · `[ ]` not started · `[!]` blocked
 
-Last verified: **2026-11-27 13:20 IST** — **GATE PASS** on all 5 stages, 271 tests / 19 files green,
+Last verified: **2026-11-27 13:20 IST** — **GATE PASS** on all 5 stages, 275 tests / 20 files green,
 `tsc --noEmit` clean, layout sweep green at 390 px and 320 px on all 8 routes, idempotency verified live
 against Neon. Deploys verified at <https://prelude-green.vercel.app>; today's `/actions`, idempotency,
 lens-CORS and favicon fixes are **local only** — the live build still serves the old code until the owner
@@ -127,7 +127,7 @@ redeploys. `prelude.ehpk` is re-packed after the final build, not before it.
 
 ## I. Tests & gate
 
-- [x] **271 unit tests, 19 files**
+- [x] **275 unit tests, 20 files**
 - [x] Container-rule tests (capture, z-order, bytes, canvas bounds, menu)
 - [x] Gate tests (swipe burst, tap burst)
 - [x] Lifecycle tests (illegal transitions, ambiguity, receipts)
@@ -136,13 +136,13 @@ redeploys. `prelude.ehpk` is re-packed after the final build, not before it.
 - [x] Memory tests (scoring, recency, empty)
 - [x] `scripts/gate.mjs` — typecheck → test → manifest → plugin build → app build
 - [x] **GATE PASS** (all 5 stages) — re-run 2026-11-27 13:10 IST on the final tree: typecheck 27.3 s,
-  **271 tests / 19 files**, manifest, plugin build, app build
+  **275 tests / 20 files**, manifest, plugin build, app build
 - [x] 3 new store tests — Postgres `Date`→ISO, string passthrough, omitted null optionals
   (`tests/action-store.test.ts`, now 11 tests)
 - [x] 8 new execution tests — `tests/execute.test.ts` pins the retry contract: same receipt on retry, one
   stored row, key equals `idempotencyKey()`, case/padding normalisation, distinct text stays distinct,
   unconfirmed rejected without a provider reference, agenda rejected and its reason kept on retry, channel
-  parity, unknown meeting. Suite: **271 tests / 19 files**
+  parity, unknown meeting. Suite: **275 tests / 20 files**
 - [x] `scripts/layout-check.mjs` — drives headless Chrome over the DevTools Protocol (real device
   emulation, not `--window-size`), measures `scrollWidth` against the requested width, detects
   layout-viewport expansion, distinguishes visible overflow from content deliberately clipped by an
@@ -175,7 +175,7 @@ redeploys. `prelude.ehpk` is re-packed after the final build, not before it.
 ## K. Ship
 
 - [x] `npm run build` green — re-run 2026-11-27 12:26 IST as part of the gate, after the responsive edits
-- [x] `npm test` green (271)
+- [x] `npm test` green (275)
 - [x] `npm run build:plugin` green → `dist/`
 - [x] SDK confirmed bundled in the plugin chunks
 - [x] UTF-8 correct in the built HTML

@@ -73,7 +73,7 @@ RESEARCH  →  research.md          (what the platform actually does)
 PLAN      →  PLAN.md              (what we build and why)
 DECIDE    →  DECISIONS.md         (every non-obvious choice + revisit-if)
 BUILD     →  src/                 (core first, then even, then api)
-VERIFY    →  tests + gate         (271 tests, typecheck, both builds)
+VERIFY    →  tests + gate         (275 tests, typecheck, both builds)
 DOCUMENT  →  README, ARCHITECTURE, DEMO, COMPARISON, CHECKLIST
 ```
 

@@ -118,7 +118,7 @@ Hard limits, each enforced by a test:
 |---|---|---|
 | Usefulness on G2 | 30% | The organizers' own named moment, daily and recurring, hands-free |
 | Read and write | 25% | One tap → real side effect → receipt with the delivered string and provider reference |
-| Technical execution | 20% | Pure tested core (271 tests), real backend, firmware rules pinned, deterministic gate |
+| Technical execution | 20% | Pure tested core (275 tests), real backend, firmware rules pinned, deterministic gate |
 | UX for display and voice | 15% | Three bands, one cursor, four gestures, voice never auto-commits |
 | Business & safety | 10% | Token-only auth, no funds, no analytics, one whitelisted origin |
 

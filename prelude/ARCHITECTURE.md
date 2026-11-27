@@ -2,7 +2,7 @@
 
 Module boundaries, the invariants each one protects, and why the boundaries are where they are.
 
-Status: **built, deployed and verified** — 271 tests across 19 files, typecheck clean, gate pass, Postgres action store live.
+Status: **built, deployed and verified** — 275 tests across 20 files, typecheck clean, gate pass, Postgres action store live.
 
 ---
 
@@ -20,7 +20,7 @@ Status: **built, deployed and verified** — 271 tests across 19 files, typechec
 ├─────────────────────────────────────────────────────────────────────┤
 │  3. INTELLIGENCE ENGINE          src/core/                          │
 │     Brief · commitments · memory · ranking · layout · voice         │
-│     Pure. No SDK, no DOM, no fetch. 271 tests.                      │
+│     Pure. No SDK, no DOM, no fetch. 275 tests.                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │  4. INTEGRATION ENGINE           src/lib/integrations/              │
 │     Notion · Slack · Resend · Exa · demo, behind one interface      │
@@ -295,7 +295,7 @@ never bundled into the `.ehpk`.
 | `gate.test.ts` | 7 | swipe burst, tap burst, window restart |
 | `architecture.test.ts` | 5 | the dependency rule — core imports nothing outward |
 | `voice-transport.test.ts` | 5 | browser capture → transport seam |
-| **Total** | **271** | **19 files** |
+| **Total** | **275** | **20 files** |
 
 ---
 
