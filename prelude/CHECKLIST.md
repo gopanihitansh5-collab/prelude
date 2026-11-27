@@ -32,7 +32,7 @@ redeploys. `prelude.ehpk` is re-packed after the final build, not before it.
 - [x] Google device-authorization flow as the WebView-OAuth answer
 - [x] Reference repos catalogued
 - [x] **23 measured hardware findings** from `maticsh/matic-even`
-- [x] Written to `../research.md`
+- [x] Written to `../notes/research.md`
 
 ## B. Planning
 
@@ -170,7 +170,7 @@ redeploys. `prelude.ehpk` is re-packed after the final build, not before it.
 - [x] `DEMO.md` — 3-minute script + 60-second version + Q&A
 - [x] `SKILLS.md` — what was installed and what shaped the code
 - [x] `CHECKLIST.md` — this file
-- [x] `../research.md`
+- [x] `../notes/research.md`
 
 ## K. Ship
 
@@ -244,4 +244,4 @@ redeploys. `prelude.ehpk` is re-packed after the final build, not before it.
 - [DEMO](./DEMO.md) — the 3-minute script
 - [SKILLS](./SKILLS.md) — tooling and what shaped the code
 - [CHECKLIST](./CHECKLIST.md) — live status and honest gaps
-- [research.md](../research.md) — the deep research
+- [research.md](../notes/research.md) — the deep research

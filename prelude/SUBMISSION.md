@@ -39,26 +39,27 @@ static WebView bundle using Even Hub SDK 0.0.16, painting three text containers 
 domain logic is pure and deterministic: an LLM can propose an action, but only a 9-state
 lifecycle can authorise one, and voice can never send without a REVIEW step.
 
-**What makes it different for a judge.** Three claims that survived a survey of the field, and one honest
-concession:
+**What makes it different for a judge.** After reading 28 of the competing repositories, exactly one claim is
+ours alone, and one is nearly so. We state both, and we concede the rest:
 
 1. **Ambiguity is a state, not a retry.** If the provider may have acted and the response was lost, the action
-   goes to `reconciling` and is never re-sent blindly — a lost response cannot become a duplicate message
-   (`src/core/action-lifecycle.ts`, `src/lib/execute.ts`). Undo windows in this field cancel *before* the send;
-   this handles *after*.
-2. **The receipt is a durable, addressable record.** A receipt only exists once a provider confirmed, it is
+   enters `reconciling` and cannot return to `executing` — a lost response cannot become a duplicate message
+   (`src/core/action-lifecycle.ts`, `src/lib/execute.ts`). **0 of 28 verified competitors model this**; two say
+   the sentence with no state behind it, and undo windows cancel *before* the send, not after.
+2. **The receipt is a durable, addressable record.** A receipt exists only after a provider confirmed, it is
    persisted, and it is addressable per action (`/api/actions/[id]`, `/actions`), so a judge can audit what
    happened rather than trust a screen. A repeated POST returns the same `actionId` and `providerReference`.
-3. **The brief leads with what you owe**, including `overdue`, and aggregates open commitments across meetings
-   (`src/core/commitments.ts`, `/api/followups`) — not a summary of what was said.
+   **≤2 partial matches in the field.**
 
-**Concession:** writes and receipts are *not* unique here — Brief, Cue and TriageG2 also prove or police writes,
-and Cue ships a commit queue with undo and idempotency. Prelude's difference is the failure path (ambiguity) and
-the durability of the record, not the mere existence of one. See [COMPETITION.md](./COMPETITION.md).
+**Concessions, so the claims above are worth something:** writes and receipts are not unique (Brief, Cue,
+Questling and TriageG2 all police writes; Questling even checks arrival), undo is table stakes and we have none,
+four competitors track overdue commitments too, and FUSE Brief reads more sources than we do. Our difference is
+the failure path and the durability of the record — not the existence of a write. See
+[COMPETITION.md](./COMPETITION.md) and [COMPETITION-MATRIX.md](./COMPETITION-MATRIX.md).
 
-**Honest weak spots** (state these if asked, do not hide them): no undo window (table stakes in this field), no
-Google Calendar or Gmail adapter (Notion is the wired read path), single-user demo with `auth: open`, and the
-5-minute locked-phone test has not been run on real hardware.
+**Honest weak spots** (state these if asked, do not hide them): no undo window, no Google Calendar or Gmail
+adapter (Notion is the wired read path), single-user demo with `auth: open`, and the 5-minute locked-phone test
+has not been run on real hardware.
 
 ---
 

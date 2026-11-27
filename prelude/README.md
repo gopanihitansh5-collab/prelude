@@ -388,7 +388,7 @@ which parts are live and which are not. That is the difference between a demo an
 - [DEMO.md](./DEMO.md) — the 3-minute demo script
 - [SKILLS.md](./SKILLS.md) — the tooling and skills used to build this
 - [CHECKLIST.md](./CHECKLIST.md) — live status of every task, including honest gaps
-- [../research.md](../research.md) — the deep research behind every decision
+- [research.md](../notes/research.md) — the deep research behind every decision
 
 ## Licence
 

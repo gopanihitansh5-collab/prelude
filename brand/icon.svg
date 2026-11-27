@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Prelude">
+  <title>Prelude</title>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7dffa8"/>
+      <stop offset="1" stop-color="#4dd0ff"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e1512"/>
+      <stop offset="1" stop-color="#050807"/>
+    </linearGradient>
+  </defs>
+
+  <!-- the lens: a rounded eyeglass rectangle, because the product is a display -->
+  <rect x="8" y="24" width="112" height="72" rx="22" fill="url(#glass)" stroke="url(#g)" stroke-width="3"/>
+
+  <!-- the three text bands, the actual UI unit of the glasses -->
+  <rect x="24" y="40" width="46" height="5" rx="2.5" fill="#7dffa8" opacity="0.95"/>
+  <rect x="24" y="56" width="80" height="5" rx="2.5" fill="#c8ffe0" opacity="0.72"/>
+  <rect x="24" y="72" width="62" height="5" rx="2.5" fill="#4dd0ff" opacity="0.62"/>
+
+  <!-- the tap: one dot that becomes an action, echoing the "one tap" claim -->
+  <circle cx="104" cy="86" r="9" fill="none" stroke="url(#g)" stroke-width="3"/>
+  <circle cx="104" cy="86" r="3.2" fill="#7dffa8"/>
+</svg>

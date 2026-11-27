@@ -69,6 +69,39 @@ under another track. Representative verified Track 01/02 rows: `Alfonova-Node/tg
 `zahar-io/nod-g2`, `Bolajiev/relay-g2` ("reply debt, cleared"), `LoganZ2/evenpulse-g2`, `k58v2hbzkk-del/witness`,
 `deniart865/oddsglance-g2`, `swiftbotlabs/liq-guard`, `teylerboal-dev/evenpulse-g2`.
 
+## Second pass — corrections (2026-11-27, 45 repos read)
+
+A deeper sweep ([COMPETITION-MATRIX.md](./COMPETITION-MATRIX.md), 53 GitHub queries, 45 READMEs read, 19 of
+121 builds mapped to a repo) **corrected three claims in this document**. Read this before quoting anything
+below:
+
+1. **TriageG2 is two different repos, and this doc credited the wrong one.** `z121245017-ai/triage-g2` is the
+   Track 04 build (Default-NO gate, 1-tap undo); `LoganZ2/triage-g2` is a Track 01 Telegram build with no undo
+   and keys held in the browser. The safety features attributed to TriageG2 above belong to the former.
+2. **"Glance Brief never sends" is not a contradiction — there are two repos.** `qinheyi/glance-brief` sends
+   (draft screen's SEND is the only write path, server requires `confirmed: true`); `Khazmi-lab/glance-brief` is
+   draft-only, which matches the listing. Both statements are true of different builds.
+3. **Kept does claim deadlines.** The matrix shows `2 DUE TODAY 1 LATE`, `KEPT 8/10 THIS WEEK` and I-owe/owed-to-me
+   with dates resolved by rules. **Our third differentiator therefore collapses** — commitment-first framing is
+   product value, not a differentiator. Kith (`2d overdue`) and Questling ("who is waiting") also do overdue.
+4. **Questling was missing from the weakness analysis and is the strongest read/write competitor read:**
+   Gmail/Slack/Telegram/GitHub/Todoist/Calendar in, writes out, and it *checks that the write arrived*.
+
+**After the corrections, exactly one column is ours alone:** an explicit unknown-outcome state that forbids retry
+and must be reconciled — **0 of 28 verified repos model it**. Two others say the sentence (Brief: "Not confirmed.
+Check Sent on your phone"; Chairside: "if delivery is uncertain… check the chat") but neither has a state, a
+surviving record, or a reconciliation pass. A durable, addressable record is **≤2 partial** matches (Next Brief's
+`/api/audit/:id` with `Applied / Undone / Not reversible` is closest).
+
+**Where we are behind, counted:** undo window (8+ repositories — we have none), evidence-of-write as a visible
+state (4), read breadth (≥5; Questling reads six sources), write breadth (≥5), commitments with overdue (≥4),
+dedupe (≥6), test volume (Brief claims 511, Questling 163), deterministic fallback, voice-review (≥5).
+
+**Coverage, stated plainly:** 19 of 121 builds mapped to a repository (13 of 16 Track 04 names), 28 READMEs
+extracted, **102 builds unverified**. Test counts are as claimed by their authors, not observed by us.
+
+---
+
 ## The crowded claims
 
 A judge scrolling 121 builds will have seen all of these before reaching ours:
@@ -155,11 +188,11 @@ Straight from our own `CHECKLIST.md` §L and the field evidence above:
   state instead — a mitigation, not a feature.
 - **No auth; `auth: open`.** Single-user demo. A shared key exists (`requireActKey`) but is not enforced.
 - **No real user testing.** Commitment detection is heuristic and its false-positive rate is unmeasured (Q-06).
+- **Deployment status (2026-11-27 14:43 IST):** live and green — `/actions` 200, a repeated `POST /api/act` returns
+  the same receipt, and the packaged `.ehpk` reaches the API from its opaque origin. Earlier notes that production
+  was one deploy behind are stale; the CORS fix was the last blocker.
 - **No hardware validation.** Private-build install not run, 5-minute lock test not run; `CHAR_ADVANCE_PX = 8.6`
   is an estimate, not measured font metrics.
-- **Production is one redeploy behind.** Until the owner redeploys, `/actions` and a repeated `POST /api/act`
-  return 500 on the live URL (`CHECKLIST.md` §K/§L). A judge who clicks will find that first. Redeploy before
-  submission — this is the single cheapest point we can recover.
 - **Not in the Best Telegram integration special prize.** Deliberate (D-01), but it is a prize we cannot win.
 - **The test count is not the argument.** 275 tests beat the visible field, but the field mostly does not compete
   on tests, and judges weight working behaviour at 20%, not test volume.
@@ -211,4 +244,4 @@ Prior art and OEM features (the brief is not a new idea):
   (Footnote, LA Hacks — G2 meeting companion with prep and follow-up review)
 
 Internal evidence: `README.md`, `DECISIONS.md` (D-01, D-03, D-04, D-16, D-17, D-18, D-23), `CHECKLIST.md` §K/§L,
-`COMPARISON.md` (corrected here on Glance Brief), `../research.md`.
+`COMPARISON.md` (corrected here on Glance Brief), `../notes/research.md`.

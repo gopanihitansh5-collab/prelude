@@ -62,7 +62,7 @@ Searched GitHub for Even Realities / Even Hub projects. Four results, and one of
 | `tntpsu/even-voice-shim` | Push-to-talk STT shim, VAD + Cloudflare Worker, explicitly a **workaround for the missing on-device STT API** | Validates our decision to keep voice as a *fallback* and tap as the primary path |
 | `chrissantorelli/moonphase-g2` | Moon phase app | Nothing — different domain |
 
-Plus the official and community references already catalogued in `../research.md`:
+Plus the official and community references already catalogued in `../notes/research.md`:
 `even-realities/evenhub-templates` (4 scaffolds), `nickustinov/even-g2-notes` (perf + event quirks),
 `nickustinov/demo-app-g2`, `dmyster145/EvenChess`, `fuutott/rdt-even-g2-rddit-client`,
 `fabioglimb/even-toolkit` (55+ components, 191 icons).
@@ -192,7 +192,7 @@ plan a beta build for the 5-minute lock test.
 - `lim0513/even-g2-plugin-hear`, `tntpsu/even-voice-shim`, `chrissantorelli/moonphase-g2`
 - `even-realities/evenhub-templates`, `nickustinov/even-g2-notes`, `fabioglimb/even-toolkit`
 - Local: `lightnoteaiiii/lib/{ai,security,observability}`
-- `../research.md` — the full research, including live endpoint probes
+- `../notes/research.md` — the full research, including live endpoint probes
 
 ---
 
@@ -206,4 +206,4 @@ plan a beta build for the 5-minute lock test.
 - [DEMO](./DEMO.md) — the 3-minute script
 - [SKILLS](./SKILLS.md) — tooling and what shaped the code
 - [CHECKLIST](./CHECKLIST.md) — live status and honest gaps
-- [research.md](../research.md) — the deep research
+- [research.md](../notes/research.md) — the deep research

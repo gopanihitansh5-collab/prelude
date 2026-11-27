@@ -188,4 +188,4 @@ If the submission form only allows a short clip:
 - [DEMO](./DEMO.md) — the 3-minute script
 - [SKILLS](./SKILLS.md) — tooling and what shaped the code
 - [CHECKLIST](./CHECKLIST.md) — live status and honest gaps
-- [research.md](../research.md) — the deep research
+- [research.md](../notes/research.md) — the deep research
