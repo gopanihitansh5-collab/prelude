@@ -3,6 +3,9 @@
 The rubric weights: **Usefulness 30% · Read&write 25% · Technical 20% · UX 15% · Business 10%**.
 The script spends its time in that order.
 
+**Narration is already recorded:** [docs/demo-voiceover.mp3](./docs/demo-voiceover.mp3), timed shot by shot in
+[docs/DEMO-SHOTLIST.md](./docs/DEMO-SHOTLIST.md). Record the screen MUTE and lay this track underneath.
+
 **The most impressive moment must be the receipt.** A judge should be able to see the action in the
 external service and verify the exact same content appears on the glasses.
 
