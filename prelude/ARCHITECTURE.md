@@ -2,7 +2,7 @@
 
 Module boundaries, the invariants each one protects, and why the boundaries are where they are.
 
-Status: **built, deployed and verified** — 263 tests, typecheck clean, gate pass, Postgres action store live.
+Status: **built, deployed and verified** — 271 tests across 19 files, typecheck clean, gate pass, Postgres action store live.
 
 ---
 
@@ -20,7 +20,7 @@ Status: **built, deployed and verified** — 263 tests, typecheck clean, gate pa
 ├─────────────────────────────────────────────────────────────────────┤
 │  3. INTELLIGENCE ENGINE          src/core/                          │
 │     Brief · commitments · memory · ranking · layout · voice         │
-│     Pure. No SDK, no DOM, no fetch. 263 tests.                      │
+│     Pure. No SDK, no DOM, no fetch. 271 tests.                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │  4. INTEGRATION ENGINE           src/lib/integrations/              │
 │     Notion · Slack · Resend · Exa · demo, behind one interface      │
@@ -193,9 +193,18 @@ POST /api/act { meetingId, action, text, confirmed }
    └─ 6. buildReceipt        → only from a provider-confirmed record
 ```
 
-**Idempotency.** The key is `hash(meetingId|kind|text)`. A retry of an action that already reached the
-provider returns the existing receipt instead of sending again. Verified: two identical `POST /api/act`
-calls return a **byte-identical** response.
+**Idempotency.** The key is `idempotencyKey(meetingId, kind, text)` — an FNV hash rendered as
+`idem_xxxxxxxx`, stored under a `UNIQUE(idempotency_key)` constraint. A retry of an action that already
+reached the provider returns the existing receipt instead of sending again, and a record already in
+`failed` is returned as it stands rather than re-walking the state machine (which would be an illegal
+transition). Verified live against Neon: two identical `POST /api/act` calls return the same `actionId`,
+the same `providerReference` and the same `at`, and the table holds one row.
+
+The first implementation looked the retry up with the raw `meetingId|kind|text` payload the key is derived
+from. That never matched the stored hash, so a retry inserted a second record: Postgres answered with a
+duplicate-key `500`, and the in-memory store silently sent twice. `execute.ts` now derives the key and
+looks it up with exactly that value. The adapter is resolved once per call and every branch reports
+`adapter.id`, so a success and a rejection on the same meeting cannot disagree about the channel.
 
 **Ambiguity.** A 5xx or a network error after the request left is `ambiguous`, not `failed`. The action
 goes to `reconciling` and is never retried blindly.
@@ -254,6 +263,7 @@ never bundled into the `.ehpk`.
 | No execution without confirmation | `action-lifecycle.ts` | `action-lifecycle.test.ts` |
 | No execution from an unvalidated transcript | `voice.ts` | `voice.test.ts` |
 | Ambiguous failure never retries blindly | `action-lifecycle.ts` | `action-lifecycle.test.ts` |
+| A retry returns the stored receipt, never a second send | `execute.ts` | `execute.test.ts` |
 | Receipt text comes from the record, not a model | `action-lifecycle.ts` | `action-lifecycle.test.ts` |
 | `fitFields` drops whole fields | `format.ts` | `format.test.ts` |
 | `utf8Bytes` agrees with `TextEncoder` | `format.ts` | `format.test.ts` |
@@ -281,10 +291,11 @@ never bundled into the `.ehpk`.
 | `enrich.test.ts` | 10 | Exa line selection, citation, failure fallback |
 | `auth.test.ts` | 9 | shared-secret gate, timing-safe comparison |
 | `notion-map.test.ts` | 9 | page → Meeting mapping, blocks → prep notes |
+| `execute.test.ts` | 8 | retry contract: stored receipt on retry, one row, key = `idempotencyKey()`, channel parity |
 | `gate.test.ts` | 7 | swipe burst, tap burst, window restart |
 | `architecture.test.ts` | 5 | the dependency rule — core imports nothing outward |
 | `voice-transport.test.ts` | 5 | browser capture → transport seam |
-| **Total** | **263** | **18 files** |
+| **Total** | **271** | **19 files** |
 
 ---
 

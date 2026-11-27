@@ -4,10 +4,11 @@ Live status of everything asked for and everything done.
 
 Legend: `[x]` done · `[~]` in progress · `[ ]` not started · `[!]` blocked
 
-Last verified: **2026-11-27 12:26 IST** — `tsc --noEmit` clean, 263 tests / 18 files green, **GATE PASS**
-on all 5 stages, layout sweep green at 390 px and 320 px on all 8 routes, `prelude.ehpk` rebuilt (243 KB).
-Deploys verified at <https://prelude-green.vercel.app>; today's fixes are **local only** — the live build
-still serves the old code until the owner redeploys.
+Last verified: **2026-11-27 13:20 IST** — **GATE PASS** on all 5 stages, 271 tests / 19 files green,
+`tsc --noEmit` clean, layout sweep green at 390 px and 320 px on all 8 routes, idempotency verified live
+against Neon. Deploys verified at <https://prelude-green.vercel.app>; today's `/actions`, idempotency,
+lens-CORS and favicon fixes are **local only** — the live build still serves the old code until the owner
+redeploys. `prelude.ehpk` is re-packed after the final build, not before it.
 
 ---
 
@@ -46,7 +47,7 @@ still serves the old code until the owner redeploys.
 - [x] Non-goals
 - [x] `PLAN.md`
 - [x] **`DECISIONS.md`** — 23 decisions (1 superseded), each with a revisit-if condition
-- [x] **`ARCHITECTURE.md`** — module boundaries + 16 invariants
+- [x] **`ARCHITECTURE.md`** — module boundaries + 17 invariants
 - [x] **`COMPARISON.md`** — what exists, what we took, what we changed
 
 ## C. Skills & tooling
@@ -107,6 +108,12 @@ still serves the old code until the owner redeploys.
   now wraps and a `@media (max-width: 640px)` block stacks `.topbar` and tightens padding
 - [x] `app/experience/intelligence-network.tsx` — `useThree` imported (fixed 2026-11-27 12:24 IST, commit
   `3aabdf4`); `npx tsc --noEmit` clean again and `gate.mjs` back to **GATE PASS** on all 5 stages
+- [x] **`/lens` CORS fix** — the page is a client component and read `NEXT_PUBLIC_API_BASE`, baked at build
+  time to `https://prelude-green.vercel.app`; from localhost the fetch was CORS-blocked and the page
+  silently fell back to fixtures while looking fine. `apiBase` is now `''` (same-origin) for this page
+  only; the plugin entry (`page.plugin.tsx`) still needs the absolute base
+- [x] **`/favicon.ico`** — was 404 on the lens route; now served from `app/icon.png` (a copy of the existing
+  24×24 1-bit `public/icon.png`)
 
 ## H. Server
 
@@ -120,7 +127,7 @@ still serves the old code until the owner redeploys.
 
 ## I. Tests & gate
 
-- [x] **263 unit tests, 18 files**
+- [x] **271 unit tests, 19 files**
 - [x] Container-rule tests (capture, z-order, bytes, canvas bounds, menu)
 - [x] Gate tests (swipe burst, tap burst)
 - [x] Lifecycle tests (illegal transitions, ambiguity, receipts)
@@ -128,10 +135,14 @@ still serves the old code until the owner redeploys.
 - [x] Commitment tests (promise, request, deadline, overdue)
 - [x] Memory tests (scoring, recency, empty)
 - [x] `scripts/gate.mjs` — typecheck → test → manifest → plugin build → app build
-- [x] **GATE PASS** (all 5 stages) — re-run 2026-11-27 12:26 IST after the `useThree` import fix: typecheck
-  18.7 s, 263 tests, manifest, plugin build, app build
+- [x] **GATE PASS** (all 5 stages) — re-run 2026-11-27 13:10 IST on the final tree: typecheck 27.3 s,
+  **271 tests / 19 files**, manifest, plugin build, app build
 - [x] 3 new store tests — Postgres `Date`→ISO, string passthrough, omitted null optionals
   (`tests/action-store.test.ts`, now 11 tests)
+- [x] 8 new execution tests — `tests/execute.test.ts` pins the retry contract: same receipt on retry, one
+  stored row, key equals `idempotencyKey()`, case/padding normalisation, distinct text stays distinct,
+  unconfirmed rejected without a provider reference, agenda rejected and its reason kept on retry, channel
+  parity, unknown meeting. Suite: **271 tests / 19 files**
 - [x] `scripts/layout-check.mjs` — drives headless Chrome over the DevTools Protocol (real device
   emulation, not `--window-size`), measures `scrollWidth` against the requested width, detects
   layout-viewport expansion, distinguishes visible overflow from content deliberately clipped by an
@@ -140,6 +151,10 @@ still serves the old code until the owner redeploys.
 - [x] **Layout sweep green** — `/`, `/lens`, `/dashboard`, `/actions`, `/followups`, `/memory`,
   `/connections`, `/settings` all pass at 390 px and 320 px: no horizontal overflow, no visible clipped
   content (the only clipped items are 3D labels inside `.stage`, which is intended)
+- [x] `scripts/route-probe.mjs` — loads routes in headless Chrome over CDP and reports every API request,
+  failed request, ≥400 response, exception and console error/warning. It caught the `/lens` CORS fallback
+  (`net::ERR_FAILED` to the deployed host where the page assumed success). Usage:
+  `node scripts/route-probe.mjs http://localhost:5173/lens`
 - [x] `scripts/db-check.mjs` — connectivity/schema probe for the Neon action store
   (`node scripts/db-check.mjs` with `DATABASE_URL`); confirmed the `actions` table exists with 11 columns
   and 2 rows
@@ -160,15 +175,28 @@ still serves the old code until the owner redeploys.
 ## K. Ship
 
 - [x] `npm run build` green — re-run 2026-11-27 12:26 IST as part of the gate, after the responsive edits
-- [x] `npm test` green (263)
+- [x] `npm test` green (271)
 - [x] `npm run build:plugin` green → `dist/`
 - [x] SDK confirmed bundled in the plugin chunks
 - [x] UTF-8 correct in the built HTML
 - [x] All API routes return 200
 - [x] Write path verified: `receipt_persisted` + delivered string
-- [x] Idempotency verified: retry returns byte-identical response
+- [x] **Idempotency was broken; fixed and verified live against Neon** — `src/lib/execute.ts` looked a retry
+  up with the raw payload `meetingId|kind|text` while the record stores the FNV hash `idem_xxxxxxxx` from
+  `idempotencyKey()` in `src/core/action-lifecycle.ts`, so the lookup never matched and every retry created
+  a second record: against Postgres `UNIQUE(idempotency_key)` threw "duplicate key value violates unique
+  constraint actions_idempotency_key_key" and `/api/act` answered 500 with an empty body; in-memory it
+  silently sent twice. `execute.ts` now computes the key with `idempotencyKey(...)` and looks up with that
+  exact value; a `failed` record is returned as-is instead of re-walking the state machine (an illegal
+  transition). Verified: two identical POSTs → same `actionId`, same `providerReference`, same `at`, one row
+- [x] **Channel consistency** — `executeAction` resolves the adapter once and reports `adapter.id` in every
+  branch, so a success and a rejection on the same meeting no longer report different channels ("demo" vs
+  "notion")
 - [x] Validation verified: agenda rejected as a write
-- [x] `evenhub pack` → `prelude.ehpk` (243 KB, SDK 0.0.16), rebuilt 2026-11-27 — packing needs no login; only uploading does
+- [x] `evenhub pack` → `prelude.ehpk` — re-packed 2026-11-27 13:16 after the final build: 244,760 B,
+  SDK 0.0.16, `min_app_version 2.2.10`, and the artifact's mtime is newer than every file in `dist/`.
+  The earlier 10:57 pack was stale because the gate rebuilt `dist/` at 12:26 — pack after the build, never
+  before it. Packing needs no login; only uploading does
 - [x] Deployed backend — <https://prelude-green.vercel.app> (`/api/health` → `200`, `mode: demo`)
 - [x] Postgres action store live in production — `/api/actions` → `durable: true`, real rows
 - [x] `/actions` 500 **fixed locally, pending redeploy** — Neon returns `timestamptz` as a JS `Date` while
@@ -191,11 +219,14 @@ still serves the old code until the owner redeploys.
 - [ ] Commitment detection is heuristic; false-positive rate unmeasured
 - [ ] Beta-build lock test not run (needs hardware)
 - [x] `wrapUntrusted()` applied to the transcript before `/api/parse` reaches an LLM
+- [!] Production still runs the pre-fix build: `/actions` and a repeated `POST /api/act` (duplicate
+  idempotency key) both 500 there until the owner redeploys. The fixes are in the local tree only
 
 ## M. Next actions, in order
 
 1. **Redeploy on Vercel (owner)** — today's fixes are committed and pushed on `master`; the live build still
-   serves the pre-fix code, so `/actions` is still the one 500 on production until the next deploy lands
+   serves the pre-fix code, so `/actions` and a repeated `/api/act` (duplicate idempotency key) are still
+   500s on production until the next deploy lands
 2. `evenhub login` → `evenhub upload prelude.ehpk -m "…"` → verify it installs as a private build on the
    glasses
 3. Record the demo per `DEMO.md`

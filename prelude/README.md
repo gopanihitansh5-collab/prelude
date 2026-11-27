@@ -139,7 +139,7 @@ A misheard transcript can never send a message.
 | **Voice with mandatory review** | `transcribing → confirmed` is an illegal transition. Voice never sends on its own |
 | **Runs with zero secrets** | No token → fixtures, and the header says `demo`. The demo never depends on a credential |
 | **576×288 browser mirror** | A judge needs no glasses and no simulator to see it work |
-| **Pure, tested core** | `src/core/` imports no SDK, no DOM, no fetch — 263 unit tests across 18 files |
+| **Pure, tested core** | `src/core/` imports no SDK, no DOM, no fetch — 271 unit tests across 19 files |
 | **Firmware rules pinned by tests** | One event-capture container, unique z-order, ≤999 UTF-8 bytes per band, canvas bounds |
 | **Measured-hardware input rules** | Swipe gate 700 ms, tap gate 350 ms, no dependence on long press — each cites a finding ID |
 | **Debounced display writes** | One write in flight, one pending, newest wins — the BLE queue is ~83 ms per call |
@@ -160,7 +160,7 @@ A misheard transcript can never send a message.
 │     Next.js route handlers. No UI, no SDK.                           │
 ├──────────────────────────────────────────────────────────────────────┤
 │  3. INTELLIGENCE ENGINE            src/core/                         │
-│     Pure. No SDK, no DOM, no fetch. 263 tests.                       │
+│     Pure. No SDK, no DOM, no fetch. 271 tests.                       │
 │       types.ts            Meeting, Brief, Action, AppState           │
 │       format.ts           utf8Bytes, truncate, wrap, fitFields       │
 │       brief.ts            raw calendar+thread+doc → Brief            │
@@ -225,18 +225,20 @@ at <https://prelude-green.vercel.app>.
 
 | Check | Result |
 |---|---|
-| `npm test` | **263/263 pass**, 18 files |
+| `npm test` | **271/271 pass**, 19 files |
 | `npx tsc --noEmit` | clean |
 | `npm run gate` | **GATE PASS** — 5 stages |
 | `npm audit` | **0 vulnerabilities** |
 | `GET /api/health` | `200 {"ok":true,"mode":"demo","auth":"open","version":"0.1.0"}` (deployed) |
 | `GET /api/actions` | `200`, `durable: true`, real Postgres rows (deployed) |
 | `GET /actions` | fixed locally after the timestamp fix; the deployed build still returns `500` until the next deploy |
+| `GET /lens` (local) | API calls are same-origin — no CORS fallback; checked with `scripts/route-probe.mjs` |
+| `GET /favicon.ico` | `200`, served from `app/icon.png` |
 | `GET /api/briefs` | `200`, 3 meetings |
 | `GET /api/followups` | `200`, open commitments |
 | `GET /api/memory?q=enterprise+pricing` | `200 "YES · 3 matches"` |
 | `POST /api/act` (reply) | `200 {"ok":true,"status":"receipt_persisted","delivered":"running 5 late","providerReference":"demo_idem_971776f9"}` |
-| `POST /api/act` (retry) | **byte-identical response, no second send** |
+| `POST /api/act` (retry) | **same `actionId`, same `providerReference`, same `at`; one row in the table** (a repeat used to duplicate-key `500`) |
 | `POST /api/act` (agenda) | `200 {"ok":false,"error":"agenda is a read, not a write"}` |
 | Plugin bundle | SDK confirmed bundled, UTF-8 correct, `dist/index.html` present |
 
@@ -252,7 +254,7 @@ npm run dev            # http://localhost:5173
 open http://localhost:5173/lens
 
 # Tests
-npm test               # 263 tests
+npm test               # 271 tests
 
 # The gate: typecheck → test → manifest → plugin build → app build
 npm run gate
@@ -369,7 +371,7 @@ by reading someone else's field notes.
 
 ### 5. A pure core that is actually testable
 
-263 unit tests run in a few seconds with no SDK, no browser and no network. The state machine is one pure
+271 unit tests run in a few seconds with no SDK, no browser and no network. The state machine is one pure
 reducer, so every gesture is a test case rather than a manual click-through.
 
 ### 6. Honest demo mode
