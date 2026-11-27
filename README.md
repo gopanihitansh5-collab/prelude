@@ -10,6 +10,7 @@ You have a meeting in nine minutes, and you know there is something you were sup
 Prelude puts the whole thing on the lens: who you are meeting, what they last said, the doc, and
 **the commitment you owe** — then lets you act with one tap, on a display you do not unlock.
 
+[▶ Watch the 2-minute demo](prelude/docs/demo.mp4) ·
 [Live backend](https://prelude-green.vercel.app) ·
 [Lens mirror](https://prelude-green.vercel.app/lens) ·
 [The argument](prelude/STORY.md) ·
