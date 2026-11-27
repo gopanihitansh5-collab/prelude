@@ -17,6 +17,7 @@ import {
   afterExecution,
   buildReceipt,
   createAction,
+  idempotencyKey,
   transition,
   validateAction,
 } from '@/core/action-lifecycle'
@@ -64,11 +65,22 @@ export async function executeAction(request: ExecuteRequest): Promise<Receipt> {
   const { meetings } = await getMeetings()
   const meeting = meetings.find((m) => m.id === request.meetingId)
   const channel = meeting?.channel ?? 'demo'
+  // The channel the receipt reports is the adapter's own id, in every branch —
+  // otherwise a failure on a Notion meeting reports "notion" while the success
+  // for the same meeting reports "demo", and the receipt stops being evidence.
+  const adapter = createRegistry().forChannel(channel)
   const text = request.text ?? defaultText(request.action)
   const store = getActionStore()
 
   // 1. Create, or reuse the record for an identical action.
-  const key = `${request.meetingId}|${request.action}|${text.trim().toLowerCase()}`
+  //
+  // The lookup key MUST be the key the record is stored under. It was not: the
+  // store was queried with the raw "meeting|kind|text" payload while the record
+  // carried its FNV hash, so the lookup never matched, a second record was
+  // created and the retry hit the UNIQUE(idempotency_key) constraint — a 500
+  // with an empty body instead of the original receipt. In-memory it was worse:
+  // no constraint, so the retry simply sent the message twice.
+  const key = idempotencyKey(request.meetingId, request.action, text)
   const existing = await store.getByIdempotencyKey(key)
 
   if (existing) {
@@ -76,11 +88,17 @@ export async function executeAction(request: ExecuteRequest): Promise<Receipt> {
     // again. Return the receipt we already have, with the same channel the
     // first call reported so the two responses agree.
     if (existing.status === 'provider_confirmed' || existing.status === 'receipt_persisted') {
-      return buildReceipt(existing, createRegistry().forChannel(channel).id)
+      return buildReceipt(existing, adapter.id)
     }
     // An action stuck in `reconciling` must be reconciled, not retried.
     if (existing.status === 'reconciling') {
-      return buildReceipt(existing, createRegistry().forChannel(channel).id)
+      return buildReceipt(existing, adapter.id)
+    }
+    // A failed action stays failed for this content: re-walking the machine
+    // from a terminal state would be an illegal transition, and silently
+    // re-sending is exactly what the retry rule forbids.
+    if (existing.status === 'failed') {
+      return buildReceipt(existing, adapter.id)
     }
   }
 
@@ -99,7 +117,7 @@ export async function executeAction(request: ExecuteRequest): Promise<Receipt> {
   if (!validation.ok) {
     const failed = transition(record, 'failed', now, { error: validation.reason })
     await store.save(failed.record)
-    return buildReceipt(failed.record, channel)
+    return buildReceipt(failed.record, adapter.id)
   }
 
   // 3. Walk the lifecycle. Each step is checked; an illegal transition is a bug.
@@ -108,15 +126,13 @@ export async function executeAction(request: ExecuteRequest): Promise<Receipt> {
     if (!result.ok) {
       const failed = transition(record, 'failed', now, { error: result.reason })
       await store.save(failed.record)
-      return buildReceipt(failed.record, channel)
+      return buildReceipt(failed.record, adapter.id)
     }
     record = result.record
     await store.save(record)
   }
 
   // 4. Execute through the adapter for this channel.
-  const registry = createRegistry()
-  const adapter = registry.forChannel(channel)
   const result = await adapter.execute({
     kind: request.action,
     text,

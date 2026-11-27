@@ -18,15 +18,19 @@ import { useVoice } from '@/ui/useVoice'
  * actions. The receipt panel below shows the server's response verbatim, which
  * is the read&write proof.
  *
- * Unlike the plugin page, this one runs same-origin, so `apiBase` is empty and
- * `/api/act` resolves against the dev server.
+ * Unlike the plugin page, this one is served by the same app that answers
+ * `/api/*`, so `apiBase` stays empty and every request is same-origin. That
+ * matters: NEXT_PUBLIC_API_BASE is baked at build time and points at the
+ * deployed backend, and a cross-origin fetch from localhost is blocked by CORS
+ * (the deployment only allows the plugin's own origins), which would make this
+ * page fall back to fixtures while looking like it worked.
  */
 export default function LensPage() {
   const [state, setState] = useState<AppState | null>(null)
   const [receiptJson, setReceiptJson] = useState<string | null>(null)
   const controllerRef = useRef<Controller | null>(null)
 
-  const apiBase = (process.env.NEXT_PUBLIC_API_BASE ?? '').replace(/\/$/, '')
+  const apiBase = ''
 
   const voice = useVoice({
     apiBase,
