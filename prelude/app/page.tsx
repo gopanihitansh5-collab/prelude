@@ -87,7 +87,7 @@ export default async function Landing() {
       mode={mode}
       enriched={enriched}
       llmLive={llmConfigured()}
-      testCount={232}
+      testCount={263}
       providers={providerStates()}
     />
   )

@@ -75,21 +75,36 @@ export class MemoryActionStore implements ActionStore {
 
 // ── Postgres (Neon) ─────────────────────────────────────────────────────────
 
-interface Row {
+export interface Row {
   id: string
   kind: string
   meeting_id: string
   text: string
   status: string
   idempotency_key: string
-  created_at: string
-  updated_at: string
+  // Neon returns `timestamptz` as a Date, not a string. The row type says so
+  // explicitly, because a Date that leaks into a server component's JSX is a
+  // render error ("Objects are not valid as a React child") — that is exactly
+  // how the /actions page 500'd in production.
+  created_at: string | Date
+  updated_at: string | Date
   provider_reference: string | null
   error: string | null
   attempts: number
 }
 
-function toRecord(row: Row): ActionRecord {
+/** A timestamp from Postgres, normalised to the ISO string the domain uses. */
+function iso(value: string | Date): string {
+  return value instanceof Date ? value.toISOString() : value
+}
+
+/**
+ * A Postgres row → the domain record.
+ *
+ * Exported so the date normalisation is unit-tested: the domain contract is
+ * `createdAt: string`, and every read path goes through this function.
+ */
+export function toRecord(row: Row): ActionRecord {
   return {
     id: row.id,
     kind: row.kind as ActionRecord['kind'],
@@ -97,8 +112,8 @@ function toRecord(row: Row): ActionRecord {
     text: row.text,
     status: row.status as ActionStatus,
     idempotencyKey: row.idempotency_key,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    createdAt: iso(row.created_at),
+    updatedAt: iso(row.updated_at),
     attempts: row.attempts ?? 0,
     ...(row.provider_reference ? { providerReference: row.provider_reference } : {}),
     ...(row.error ? { error: row.error } : {}),

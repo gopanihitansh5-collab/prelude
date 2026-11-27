@@ -4,6 +4,7 @@ import {
   PostgresActionStore,
   getActionStore,
   resetActionStore,
+  toRecord,
 } from '../src/lib/action-store.ts'
 import { createAction } from '../src/core/action-lifecycle.ts'
 import type { ActionRecord } from '../src/core/action-lifecycle.ts'
@@ -63,6 +64,53 @@ describe('MemoryActionStore', () => {
     expect((await store.list(1000)).length).toBe(500)
     expect(await store.get('act_0')).toBeNull()
     expect(await store.get('act_500')).not.toBeNull()
+  })
+})
+
+describe('toRecord', () => {
+  const base = {
+    id: 'act_1',
+    kind: 'reply',
+    meeting_id: 'm1',
+    text: 'running 5 late',
+    status: 'receipt_persisted',
+    idempotency_key: 'idem_1',
+    provider_reference: 'demo_idem_1',
+    error: null,
+    attempts: 1,
+  }
+
+  it('normalises Postgres Date timestamps to ISO strings', () => {
+    // Neon returns timestamptz as Date. A Date reaching JSX is a 500.
+    const record = toRecord({
+      ...base,
+      created_at: new Date('2026-11-26T09:00:00Z'),
+      updated_at: new Date('2026-11-26T09:00:01Z'),
+    })
+    expect(record.createdAt).toBe('2026-11-26T09:00:00.000Z')
+    expect(record.updatedAt).toBe('2026-11-26T09:00:01.000Z')
+    expect(typeof record.createdAt).toBe('string')
+  })
+
+  it('passes string timestamps through unchanged', () => {
+    const record = toRecord({
+      ...base,
+      created_at: '2026-11-26T09:00:00.000Z',
+      updated_at: '2026-11-26T09:00:01.000Z',
+    })
+    expect(record.createdAt).toBe('2026-11-26T09:00:00.000Z')
+  })
+
+  it('omits optional fields that the database left null', () => {
+    const record = toRecord({
+      ...base,
+      provider_reference: null,
+      error: null,
+      created_at: '2026-11-26T09:00:00.000Z',
+      updated_at: '2026-11-26T09:00:01.000Z',
+    })
+    expect(record).not.toHaveProperty('providerReference')
+    expect(record).not.toHaveProperty('error')
   })
 })
 
