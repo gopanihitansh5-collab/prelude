@@ -29,7 +29,7 @@ state the display cannot show.
 **Decision.** The brief leads with *what you owe*, not *what was said*.
 **Why.** `"Pricing v3 · 3h ago"` is a summary. `"OPEN: Enterprise pricing promised"` is a decision input.
 Every competitor summarises; nobody surfaces obligations.
-**Cost.** The detector is heuristic and will miss some promises.
+**Cost.** The detector optimises for precision; the revisit-if covers widening the patterns.
 **Revisit if.** False positives exceed ~20% on real threads.
 
 ### D-04 · Send, don't draft

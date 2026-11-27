@@ -299,19 +299,6 @@ never bundled into the `.ehpk`.
 
 ---
 
-## What is deliberately absent
-
-| Not built | Why |
-|---|---|
-| A migration framework | The schema is one `CREATE TABLE IF NOT EXISTS` in the store. A migration tool is the upgrade path once there are real users, not before |
-| Auth | The deployment runs in `auth: open` demo mode. A shared key (`requireActKey`) exists for a locked-down build; user accounts do not |
-| A queue | Actions are synchronous and idempotent. A queue would add a failure mode without removing one |
-| Embeddings | Deterministic term overlap is testable and reproducible. pgvector is the upgrade path |
-| A second source of truth | Two renderers exist — `layout.ts` (contract) and `panel.ts` (appearance) — but both derive from `AppState` and neither may invent a fact |
-| Live calendar read | Needs a property mapping; a half-mapped one is worse than an honest demo |
-
----
-
 ## Docs
 
 - [README](./README.md) — what it is, how to run it

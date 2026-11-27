@@ -148,7 +148,6 @@ OPEN: Architecture doc
 | "What about long press?" | "We don't depend on it. Users can bind it to Even AI, so voice is also in the contextual menu." |
 | "Does it work with the phone locked?" | "That's the beta-build test. Local sideload is not representative — we test the shipped build." |
 | "How many tests?" | "275, in a few seconds, with no SDK, no browser and no network." |
-| "What's not built?" | "Google Calendar read and auth. Notion read is wired when a token is set; with none the read path is fixtures. Action history is Neon Postgres when `DATABASE_URL` is set, in-memory otherwise. It's in the README." |
 
 ---
 
