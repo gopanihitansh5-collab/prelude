@@ -1,17 +1,22 @@
 // Generates the 24x24 store icon as a PNG, built from 2x2 blocks.
 //
-// The Even Hub store icon must be 1-bit monochrome and every lit pixel must be
-// part of a 2x2 block, so the effective detail budget is 12x12. This draws a
-// "P" for Prelude with 2px strokes on a white field, which is what the portal's
-// pixel editor expects.
+// Two constraints from the Even Hub portal, both learned the hard way:
+//
+//   • The icon is 1-bit monochrome drawn on a 2x2 raster grid, so the effective
+//     detail budget is 12x12.
+//   • Every VISIBLE pixel must be opaque #F4F4F4. The first version drew a black
+//     "P" on white and `evenhub create` rejected it:
+//       "icon pixel (0, 0) is #000000; every visible pixel must be opaque #F4F4F4"
+//     So the glyph is #F4F4F4 and the field is transparent, not white.
 //
 // Run: node scripts/make-icon.mjs
 import { deflateSync } from 'node:zlib'
 import { writeFileSync } from 'node:fs'
 
 const SIZE = 24
+const LIT = 0xf4 // 244 — the only colour the portal accepts
 
-// 12x12 design grid. 1 = lit (black). A "P" with a 2-cell stem and bowl.
+// 12x12 design grid. 1 = lit. A "P" with a 2-cell stem and bowl.
 const DESIGN = [
   '111111111100',
   '111111111100',
@@ -32,12 +37,16 @@ for (let y = 0; y < SIZE; y++) {
   for (let x = 0; x < SIZE; x++) {
     const lit = DESIGN[Math.floor(y / 2)]?.[Math.floor(x / 2)] === '1'
     const i = (y * SIZE + x) * 4
-    // Lit = black, unlit = white. Fully opaque, so the icon reads on any field.
-    const value = lit ? 0 : 255
-    pixels[i] = value
-    pixels[i + 1] = value
-    pixels[i + 2] = value
-    pixels[i + 3] = 255
+    if (lit) {
+      // Opaque #F4F4F4: the only visible colour the portal accepts.
+      pixels[i] = LIT
+      pixels[i + 1] = LIT
+      pixels[i + 2] = LIT
+      pixels[i + 3] = 255
+    } else {
+      // Transparent, so the glyph reads on the portal's own background.
+      pixels[i + 3] = 0
+    }
   }
 }
 
@@ -83,4 +92,4 @@ const png = Buffer.concat([
 ])
 
 writeFileSync(new URL('../public/icon.png', import.meta.url), png)
-console.log(`icon.png written: ${png.length} bytes, ${SIZE}x${SIZE}, 2x2 blocks`)
+console.log(`icon.png written: ${png.length} bytes, ${SIZE}x${SIZE}, 2x2 blocks, #F4F4F4 on transparent`)
