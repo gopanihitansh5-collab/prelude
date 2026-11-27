@@ -381,14 +381,9 @@ which parts are live and which are not. That is the difference between a demo an
 
 ## Docs
 
-- [PLAN.md](./PLAN.md) — product, architecture, build order, non-goals
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — module boundaries and the invariants each protects
 - [DECISIONS.md](./DECISIONS.md) — every non-obvious choice, with a **revisit-if** condition
-- [COMPARISON.md](./COMPARISON.md) — what already exists, what we took, what we changed
 - [DEMO.md](./DEMO.md) — the 3-minute demo script
-- [SKILLS.md](./SKILLS.md) — the tooling and skills used to build this
-- [CHECKLIST.md](./CHECKLIST.md) — live status of every task, including honest gaps
-- [research.md](../notes/research.md) — the deep research behind every decision
 
 ## Licence
 

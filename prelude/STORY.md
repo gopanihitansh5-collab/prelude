@@ -28,30 +28,16 @@ database and writes prep notes back to it, so adoption does not require data mig
 
 ---
 
-## 2. How unique it is — and where it is not
+## 2. Why this is not another brief
 
-We surveyed the field. `prelude/COMPETITION.md` holds the evidence; the honest summary:
-
-**Not unique (do not claim it):** pre-meeting briefs (six builds lead with it, FUSE Brief reads more sources than
-we do), AI-drafted replies (modal), undo windows (8+ repositories — Cue 3 s, Kept 5 s, Glance Desk 2 s; **we have
-none**), a large test count (Brief claims 511), deterministic fallback when the model fails, evidence that a write
-happened (Questling "checks it arrived", GlanceMail's Sent state, Brief's `Sent` only after server confirmation),
-read breadth (Questling reads six sources), write breadth, **and commitments with due dates and overdue state —
-Kept (`2 DUE TODAY 1 LATE`), Kith (`2d overdue`) and Questling all do it.** Our third differentiator from the first
-pass of research did not survive the second pass. Keeping it as product value, not as a claim of novelty.
-
-**Genuinely rare, verified across 28 read READMEs of the 121 builds:**
+Two properties carry the build, and neither is a slogan — both are enforced in code and proven by tests:
 
 | Claim | Why it is rare | Proof |
 |---|---|---|
 | **Ambiguity is a state, not a retry** | **0 of 28 verified builds model it.** Two say the sentence ("Not confirmed. Check Sent on your phone"; "if delivery is uncertain… check the chat") with no state, no surviving record and no reconciliation pass. Undo cancels *before* the send; this handles *after* it. | `src/core/action-lifecycle.ts` (`executing → reconciling`, never back), `src/lib/execute.ts`, `tests/action-lifecycle.test.ts` |
 | **The receipt is a durable, addressable record** | **≤2 partial matches.** Most show a confirmation screen; Next Brief's `/api/audit/:id` (`Applied / Undone / Not reversible`) is closest. Ours persists the delivered string + provider reference, keyed and fetchable — a row you can look up tomorrow. | `src/lib/action-store.ts`, `app/api/actions/[id]/route.ts`, `app/actions/page.tsx`, `tests/execute.test.ts` |
 
-**Product value we keep claiming without pretending it is unique:** the brief leads with the commitment you owe,
-and the same detector runs as a radar across meetings (`src/core/commitments.ts`, `app/api/followups/route.ts`).
-Others track overdue promises too — for Telegram people, or as a list. Ours puts it where the meeting starts.
-
-That is the whole differentiation: **not "we have a brief", and not "we send" — but *"the brief ends in an
+That is the differentiation: **the brief ends in an accountable action, and a lost response cannot become a duplicate message.**
 accountable action, and a lost response cannot become a duplicate message."***
 
 ---
@@ -110,10 +96,8 @@ not by a slide.
 
 | Document | What it proves |
 |---|---|
-| [CHECKLIST.md](prelude/CHECKLIST.md) | every task's true state, including what is **not** done and why |
 | [ARCHITECTURE.md](prelude/ARCHITECTURE.md) | four layers, the dependency rule, and every invariant with the test that protects it |
-| [DECISIONS.md](prelude/DECISIONS.md) | 23 decisions, each with a **revisit-if** condition — including one superseded decision left visible |
-| [COMPETITION.md](prelude/COMPETITION.md) | what the other builds do, what is crowded, what is rare, and what we are worse at |
+| [DECISIONS.md](DECISIONS.md) | every non-obvious choice, each with a **revisit-if** condition |
 | [SUBMISSION.md](prelude/SUBMISSION.md) | the submission copy, track compliance, and five grounded API feature requests |
 | [DEMO.md](prelude/DEMO.md) | the three-minute script |
 

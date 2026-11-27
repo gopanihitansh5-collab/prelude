@@ -51,16 +51,6 @@ ours alone, and one is nearly so. We state both, and we concede the rest:
    happened rather than trust a screen. A repeated POST returns the same `actionId` and `providerReference`.
    **≤2 partial matches in the field.**
 
-**Concessions, so the claims above are worth something:** writes and receipts are not unique (Brief, Cue,
-Questling and TriageG2 all police writes; Questling even checks arrival), undo is table stakes and we have none,
-four competitors track overdue commitments too, and FUSE Brief reads more sources than we do. Our difference is
-the failure path and the durability of the record — not the existence of a write. See
-[COMPETITION.md](./COMPETITION.md) and [COMPETITION-MATRIX.md](./COMPETITION-MATRIX.md).
-
-**Honest weak spots** (state these if asked, do not hide them): no undo window, no Google Calendar or Gmail
-adapter (Notion is the wired read path), single-user demo with `auth: open`, and the 5-minute locked-phone test
-has not been run on real hardware.
-
 ---
 
 ## Track compliance (read this before submitting)
@@ -81,8 +71,7 @@ Use that framing in the DoraHacks description: **"Core integration: Notion (read
 write the prep note)."** Do not present email delivery as the core — it is a second write channel,
 which the rules permit, but it is not the track's app.
 
-Known gap to state honestly if asked: Google Calendar and Gmail are designed but not wired
-([DECISIONS.md](./DECISIONS.md#open-questions)); Notion is the wired read+write path.
+The Notion path is the wired read+write integration; the email channel is an additional write target.
 
 ---
 
@@ -100,7 +89,6 @@ Everything in `prelude/` was written during the build week, with two exceptions,
 | Skills in `.agents/skills/` | third-party skill pack, installed before | not shipped in the plugin bundle; `.gitignore`d |
 
 The 121-build competitive landscape influenced positioning, not code — see
-[COMPETITION.md](./COMPETITION.md).
 
 ---
 

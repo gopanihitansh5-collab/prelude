@@ -223,11 +223,6 @@ What replaced it: …
 ## Docs
 
 - [README](./README.md) — what it is, how to run it
-- [PLAN](./PLAN.md) — product, architecture, build order, non-goals
 - [ARCHITECTURE](./ARCHITECTURE.md) — module boundaries and invariants
 - [DECISIONS](./DECISIONS.md) — every choice, with a revisit-if condition
-- [COMPARISON](./COMPARISON.md) — what exists, what we took, what we changed
 - [DEMO](./DEMO.md) — the 3-minute script
-- [SKILLS](./SKILLS.md) — tooling and what shaped the code
-- [CHECKLIST](./CHECKLIST.md) — live status and honest gaps
-- [research.md](../notes/research.md) — the deep research

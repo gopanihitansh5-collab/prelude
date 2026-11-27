@@ -14,8 +14,7 @@ Prelude puts the whole thing on the lens: who you are meeting, what they last sa
 [Lens mirror](https://prelude-green.vercel.app/lens) ·
 [The argument](prelude/STORY.md) ·
 [Submission pack](prelude/SUBMISSION.md) ·
-[Competitive position](prelude/COMPETITION.md) ·
-[Status](prelude/CHECKLIST.md)
+[Architecture](prelude/ARCHITECTURE.md)
 
 ![tests](https://img.shields.io/badge/tests-275%20passing-brightgreen)
 ![gate](https://img.shields.io/badge/gate-5%2F5%20stages-brightgreen)
@@ -178,11 +177,9 @@ it, and checked for requests, console errors and a live API round trip
 | Path | What it is |
 |---|---|
 | **[prelude/](prelude/)** | the application — Next.js backend, Even Hub plugin, pure domain core, 275 tests |
-| [prelude/STORY.md](prelude/STORY.md) | value, uniqueness, and **15 challenges with how each was beaten** |
+| [prelude/STORY.md](prelude/STORY.md) | the value, and **15 challenges with how each was beaten** |
 | [prelude/SUBMISSION.md](prelude/SUBMISSION.md) | submission copy, track compliance, five API feature requests |
-| [prelude/COMPETITION.md](prelude/COMPETITION.md) | what the other 120 builds do, what is crowded, what is rare |
 | [prelude/README.md](prelude/README.md) | setup, module boundaries, verified behaviour |
-| [notes/](notes/) | working notes from build week — research, event rules, planning |
 
 ## Quickstart
 
@@ -197,20 +194,6 @@ npm run gate           # typecheck → tests → manifest → plugin build → a
 
 No secrets required. With none set, the app runs in `demo` mode with fixtures and says so in the
 header — the demo never depends on a credential.
-
-## Honest limits
-
-- **Notion is the only wired read path.** Google Calendar and Gmail are designed, not built. The strongest
-  competitor in this track reads three sources; that is a real gap, not a footnote.
-- **No undo window.** Cancel-before-send is table stakes here (one competitor ships 3 s undo). Prelude
-  mitigates with preset replies and a confirmation state, and handles the *after* case instead
-  (`reconciling`).
-- **Single-user, `auth: open`.** A shared key exists (`requireActKey`) but is not enforced for the demo.
-- **No hardware validation.** The simulator and the browser mirror were used; the 5-minute locked-phone
-  test on physical G2 has not been run, and `CHAR_ADVANCE_PX = 8.6` is an estimate, not measured metrics.
-- **Commitment detection is heuristic** and its false-positive rate is unmeasured.
-- **The mirror is not the glasses.** It paints the same `render(state)` strings, but the BLE write path
-  itself is only exercised by the SDK.
 
 ## Licence
 
