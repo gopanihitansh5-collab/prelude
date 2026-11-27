@@ -130,16 +130,16 @@ A misheard transcript can never send a message.
 |---|---|
 | **One card, one decision** | 576×288 forces a single decision per screen. That is the design constraint, not a limitation to apologise for |
 | **Commitment awareness** | The brief leads with *what you owe* — `OPEN: Enterprise pricing promised` — not a summary of what was said |
-| **Cross-source memory** | "Have we discussed the enterprise pricing?" → `YES · 2 matches / Last: Nov 22`, with source and timestamp |
+| **Cross-source memory** | "Have we discussed the enterprise pricing?" → `YES · 3 matches / Last: Nov 27`, with source and timestamp |
 | **Follow-up radar** | The same detector runs across every meeting, so the app is useful *between* meetings |
 | **Ranked actions** | Reply leads when the meeting is imminent; "Join now" only appears in the last five minutes |
-| **Real write path** | Notion / Slack behind a server. The WebView never sees a token |
+| **Real write path** | Notion / Slack / email behind a server. The WebView never sees a token |
 | **Verbatim receipt** | The delivered string is returned by the server and rendered unchanged |
 | **Action lifecycle** | 9 states, idempotency keys, and ambiguity as a state — a lost response never sends twice |
 | **Voice with mandatory review** | `transcribing → confirmed` is an illegal transition. Voice never sends on its own |
 | **Runs with zero secrets** | No token → fixtures, and the header says `demo`. The demo never depends on a credential |
 | **576×288 browser mirror** | A judge needs no glasses and no simulator to see it work |
-| **Pure, tested core** | `src/core/` imports no SDK, no DOM, no fetch — 171 unit tests in 1.2 s |
+| **Pure, tested core** | `src/core/` imports no SDK, no DOM, no fetch — 263 unit tests across 18 files |
 | **Firmware rules pinned by tests** | One event-capture container, unique z-order, ≤999 UTF-8 bytes per band, canvas bounds |
 | **Measured-hardware input rules** | Swipe gate 700 ms, tap gate 350 ms, no dependence on long press — each cites a finding ID |
 | **Debounced display writes** | One write in flight, one pending, newest wins — the BLE queue is ~83 ms per call |
@@ -160,7 +160,7 @@ A misheard transcript can never send a message.
 │     Next.js route handlers. No UI, no SDK.                           │
 ├──────────────────────────────────────────────────────────────────────┤
 │  3. INTELLIGENCE ENGINE            src/core/                         │
-│     Pure. No SDK, no DOM, no fetch. 171 tests.                       │
+│     Pure. No SDK, no DOM, no fetch. 263 tests.                       │
 │       types.ts            Meeting, Brief, Action, AppState           │
 │       format.ts           utf8Bytes, truncate, wrap, fitFields       │
 │       brief.ts            raw calendar+thread+doc → Brief            │
@@ -172,7 +172,7 @@ A misheard transcript can never send a message.
 │       layout.ts           AppState → { header, body, status }        │
 ├──────────────────────────────────────────────────────────────────────┤
 │  4. INTEGRATION ENGINE             src/lib/integrations/             │
-│     Notion · Slack · demo, behind one interface                      │
+│     Notion · Slack · Resend · Exa · demo, behind one interface       │
 │     The only layer that holds a provider token.                      │
 └──────────────────────────────────────────────────────────────────────┘
               │ fetch (one whitelisted origin)
@@ -182,6 +182,7 @@ A misheard transcript can never send a message.
 │    GET  /api/health          liveness + mode                         │
 │    GET  /api/briefs          today's meetings                        │
 │    POST /api/act             execute → receipt                       │
+│    GET  /api/actions         action history (durable)                │
 │    POST /api/actions/preview validate without executing              │
 │    GET  /api/actions/[id]    status + receipt                        │
 │    GET  /api/memory?q=       cross-source recall                     │
@@ -219,18 +220,21 @@ first for exactly this reason.
 
 ## Verified behaviour
 
-Every claim below was run against the built app on 2026-11-25.
+Every claim below was run against the built app on **2026-11-27**, locally and against the deployment
+at <https://prelude-green.vercel.app>.
 
 | Check | Result |
 |---|---|
-| `npm test` | **171/171 pass**, 9 files, 1.2 s |
+| `npm test` | **263/263 pass**, 18 files |
 | `npx tsc --noEmit` | clean |
 | `npm run gate` | **GATE PASS** — 5 stages |
 | `npm audit` | **0 vulnerabilities** |
-| `GET /api/health` | `200 {"ok":true,"mode":"demo"}` |
+| `GET /api/health` | `200 {"ok":true,"mode":"demo","auth":"open","version":"0.1.0"}` (deployed) |
+| `GET /api/actions` | `200`, `durable: true`, real Postgres rows (deployed) |
+| `GET /actions` | fixed locally after the timestamp fix; the deployed build still returns `500` until the next deploy |
 | `GET /api/briefs` | `200`, 3 meetings |
 | `GET /api/followups` | `200`, open commitments |
-| `GET /api/memory?q=enterprise+pricing` | `200 "YES · 2 matches"` |
+| `GET /api/memory?q=enterprise+pricing` | `200 "YES · 3 matches"` |
 | `POST /api/act` (reply) | `200 {"ok":true,"status":"receipt_persisted","delivered":"running 5 late","providerReference":"demo_idem_971776f9"}` |
 | `POST /api/act` (retry) | **byte-identical response, no second send** |
 | `POST /api/act` (agenda) | `200 {"ok":false,"error":"agenda is a read, not a write"}` |
@@ -248,7 +252,7 @@ npm run dev            # http://localhost:5173
 open http://localhost:5173/lens
 
 # Tests
-npm test               # 171 tests
+npm test               # 263 tests
 
 # The gate: typecheck → test → manifest → plugin build → app build
 npm run gate
@@ -281,9 +285,14 @@ Every variable is optional. With none set, the app runs in demo mode and says so
 | Variable | Effect when set |
 |---|---|
 | `NOTION_TOKEN` + `NOTION_PAGE_ID` | Prep notes are written to a real Notion page |
+| `NOTION_TOKEN` + `NOTION_DATABASE_ID` | Meetings are read live from a Notion database; any failure falls back to fixtures |
 | `SLACK_TOKEN` + `SLACK_CHANNEL` | Replies are posted to a real Slack channel |
+| `RESEND_API_KEY` + `RESEND_FROM` + `RESEND_TO` | Replies are delivered by email through Resend |
+| `EXA_API_KEY` | A meeting with no thread and no doc gets one citable web line |
 | `STT_API_KEY` | Voice is transcribed by a real provider instead of the canned transcript |
-| `OPENROUTER_API_KEY` | Transcripts are classified by an LLM instead of keyword rules |
+| `LLM_API_KEY` (legacy alias: `OPENROUTER_API_KEY`) | Transcripts are classified by an LLM instead of keyword rules |
+| `DATABASE_URL` | The action store is Neon Postgres instead of in-memory; history survives a restart |
+| `PRELUDE_ACT_KEY` | `/api/act` and `/api/actions` require the `x-prelude-key` header; unset keeps the demo open |
 
 **No secret ever reaches the WebView.** An `.ehpk` is extractable, so every token lives on the server
 and the plugin is whitelisted to exactly one origin.
@@ -360,7 +369,7 @@ by reading someone else's field notes.
 
 ### 5. A pure core that is actually testable
 
-171 unit tests run in 1.2 s with no SDK, no browser and no network. The state machine is one pure
+263 unit tests run in a few seconds with no SDK, no browser and no network. The state machine is one pure
 reducer, so every gesture is a test case rather than a manual click-through.
 
 ### 6. Honest demo mode

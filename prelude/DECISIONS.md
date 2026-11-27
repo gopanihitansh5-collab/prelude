@@ -5,7 +5,7 @@ This file exists so a future reader (or a future us) can audit the reasoning ins
 
 Format: **D-nn · title** — decision · why · cost · revisit-if.
 
-Status: 22 decisions, all current. No superseded entries yet.
+Status: 23 decisions; D-22 is superseded by D-23.
 
 ---
 
@@ -109,7 +109,7 @@ lifecycle event and audio frame fires the tap handler.
 
 ### D-13 · `src/core/` imports nothing
 **Decision.** No SDK, no DOM, no fetch in the core.
-**Why.** It makes the layout engine and the state machine testable in plain Node — 171 tests in 1.2 s.
+**Why.** It makes the layout engine and the state machine testable in plain Node — 263 tests in a few seconds.
 It also makes the display budget provable rather than hoped for.
 **Cost.** The Even layer must translate between SDK types and core types.
 **Revisit if.** Never.
@@ -171,13 +171,15 @@ pinning a model version, and a model change would silently change the answer.
 **Revisit if.** Users ask questions the term overlap cannot answer. Then pgvector, with the deterministic
 scorer kept as the fallback.
 
-### D-22 · In-memory action store, not a database
-**Decision.** `src/lib/execute.ts` keeps actions in a `Map`.
-**Why.** A 6-day build does not need a database, and the Map has the same shape as a Postgres table
-(`id`, `status`, `idempotencyKey`, `attempts`, `providerReference`). Adding Postgres is a swap, not a
-redesign.
-**Cost.** Actions are lost on restart.
-**Revisit if.** We need an audit trail across restarts, or more than one server instance.
+### D-23 · Postgres action store, in-memory fallback
+**Decision.** `src/lib/action-store.ts` selects the store: Neon Postgres when `DATABASE_URL` is set,
+the in-memory `Map` otherwise. Both sit behind the `ActionStore` interface.
+**Why.** The receipt is only an audit trail if it survives the process. A `Map` loses every record on
+restart, so the history page could never prove what actually happened.
+**Cost.** The deployment now depends on `DATABASE_URL`; without it history is lost on restart, and the
+store reports `durable: false` rather than hiding it. The schema is one `CREATE TABLE IF NOT EXISTS`,
+created on first use.
+**Revisit if.** The store needs more than one table, a migration framework, or more than one writer.
 
 ---
 
@@ -197,8 +199,15 @@ redesign.
 
 ## Superseded decisions
 
-None yet. When a decision is reversed, move it here with the date and the reason, so the history stays
-readable.
+When a decision is reversed, it moves here with the date and the reason, so the history stays readable.
+
+### D-22 · In-memory action store, not a database — SUPERSEDED 2026-11-26 by D-23
+
+Original decision: `src/lib/execute.ts` kept actions in a `Map`.
+Why it was reversed: the store had to survive a restart, so the receipt and the `/actions` history
+could be an audit trail rather than a per-process cache.
+What replaced it: `src/lib/action-store.ts` — Neon Postgres when `DATABASE_URL` is set, with the
+in-memory `Map` kept as the zero-setup fallback.
 
 ### Format for a superseded entry
 

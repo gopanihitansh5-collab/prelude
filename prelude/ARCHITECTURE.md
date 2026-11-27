@@ -2,7 +2,7 @@
 
 Module boundaries, the invariants each one protects, and why the boundaries are where they are.
 
-Status: **built and verified** — 171 tests, typecheck clean, gate pass.
+Status: **built, deployed and verified** — 263 tests, typecheck clean, gate pass, Postgres action store live.
 
 ---
 
@@ -20,10 +20,10 @@ Status: **built and verified** — 171 tests, typecheck clean, gate pass.
 ├─────────────────────────────────────────────────────────────────────┤
 │  3. INTELLIGENCE ENGINE          src/core/                          │
 │     Brief · commitments · memory · ranking · layout · voice         │
-│     Pure. No SDK, no DOM, no fetch. 171 tests.                      │
+│     Pure. No SDK, no DOM, no fetch. 263 tests.                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │  4. INTEGRATION ENGINE           src/lib/integrations/              │
-│     Notion · Slack · demo, behind one interface                     │
+│     Notion · Slack · Resend · Exa · demo, behind one interface      │
 │     The only layer that holds a provider token.                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -38,7 +38,7 @@ src/core/  ──▶  nothing
 ```
 
 `src/core/` importing anything from `src/even/`, `app/`, or `src/lib/` is a bug. It is the reason the
-core can be tested in 1.2 seconds without a browser.
+core can be tested in seconds without a browser.
 
 ---
 
@@ -171,6 +171,7 @@ startup page is built **with its text already in it**, and every later change is
 | `/api/health` | GET | Liveness + mode (`demo` / `live`) |
 | `/api/briefs` | GET | Today's meetings |
 | `/api/act` | POST | Execute an approved action → receipt |
+| `/api/actions` | GET | Action history, newest first; reports whether the store is durable |
 | `/api/actions/preview` | POST | Validate without executing |
 | `/api/actions/[id]` | GET | Status + receipt for one action |
 | `/api/memory` | GET | Cross-source recall |
@@ -227,6 +228,8 @@ interface IntegrationProvider {
 | Demo | `demo.ts` | Full contract, no credentials. The default |
 | Notion | `notion.ts` | Real read + write. No idempotency key, so a retry is ambiguous by design |
 | Slack | `slack.ts` | Real read + write. **Has** `client_msg_id`, so a retry is safe |
+| Resend | `resend.ts` | Email write target. **Has** an `Idempotency-Key` header, so a retry is safe. No read API |
+| Exa | `exa.ts` | Read-only web search. `execute` refuses every action rather than pretending to send |
 
 Adding Gmail, Calendar, Drive or Outlook means writing one file and registering it in `index.ts`. The
 brief engine never learns which app a fact came from.
@@ -263,16 +266,25 @@ never bundled into the `.ehpk`.
 
 | File | Tests | Covers |
 |---|---|---|
-| `format.test.ts` | 24 | byte counting, truncation, wrapping, field fitting, relative time |
+| `format.test.ts` | 31 | byte counting, truncation, wrapping, field fitting, relative time |
 | `brief.test.ts` | 20 | attendee selection, last message, brief assembly, upcoming/next |
 | `actions.test.ts` | 27 | ranking, navigation, writes, receipts, all 8 screens' rendering |
+| `action-lifecycle.test.ts` | 25 | idempotency, illegal transitions, validation, ambiguity, receipts |
+| `commitments.test.ts` | 19 | promise, request, deadline, overdue, ordering |
+| `memory.test.ts` | 16 | scoring, recency, empty, line fitting |
+| `llm.test.ts` | 16 | untrusted-input wrapping, proposal shape, failure fallback |
 | `containers.test.ts` | 15 | capture, z-order, bytes, canvas bounds, menu rules |
+| `voice.test.ts` | 14 | REVIEW mandatory, cancellation, execution guard |
+| `context.test.ts` | 13 | the brief context layer and its provenance |
+| `action-store.test.ts` | 11 | in-memory store, Postgres selection, row → record date normalisation |
+| `panel.test.ts` | 11 | 26-char rows, panel structure, clock dithering |
+| `enrich.test.ts` | 10 | Exa line selection, citation, failure fallback |
+| `auth.test.ts` | 9 | shared-secret gate, timing-safe comparison |
+| `notion-map.test.ts` | 9 | page → Meeting mapping, blocks → prep notes |
 | `gate.test.ts` | 7 | swipe burst, tap burst, window restart |
-| `action-lifecycle.test.ts` | 22 | idempotency, illegal transitions, validation, ambiguity, receipts |
-| `voice.test.ts` | 12 | REVIEW mandatory, cancellation, execution guard |
-| `commitments.test.ts` | 17 | promise, request, deadline, overdue, ordering |
-| `memory.test.ts` | 15 | scoring, recency, empty, line fitting |
-| **Total** | **171** | |
+| `architecture.test.ts` | 5 | the dependency rule — core imports nothing outward |
+| `voice-transport.test.ts` | 5 | browser capture → transport seam |
+| **Total** | **263** | **18 files** |
 
 ---
 
@@ -280,11 +292,11 @@ never bundled into the `.ehpk`.
 
 | Not built | Why |
 |---|---|
-| A database | A 6-day build does not need one. The in-memory store has the same shape as a Postgres table |
-| Auth | The hackathon demo is single-user. OAuth is designed for (device flow) but not wired |
+| A migration framework | The schema is one `CREATE TABLE IF NOT EXISTS` in the store. A migration tool is the upgrade path once there are real users, not before |
+| Auth | The deployment runs in `auth: open` demo mode. A shared key (`requireActKey`) exists for a locked-down build; user accounts do not |
 | A queue | Actions are synchronous and idempotent. A queue would add a failure mode without removing one |
 | Embeddings | Deterministic term overlap is testable and reproducible. pgvector is the upgrade path |
-| A second renderer | The mirror paints the same strings as the glasses. Two renderers would drift |
+| A second source of truth | Two renderers exist — `layout.ts` (contract) and `panel.ts` (appearance) — but both derive from `AppState` and neither may invent a fact |
 | Live calendar read | Needs a property mapping; a half-mapped one is worse than an honest demo |
 
 ---

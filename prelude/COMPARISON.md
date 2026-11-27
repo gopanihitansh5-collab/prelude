@@ -46,7 +46,8 @@ the same principle applied to the UI.
 
 - `terraforge` / `praxis-telco-churn` — ML pipelines, nothing to do with a 576×288 display.
 - `crucible` — Web3 contracts. The hackathon's money-safety rule makes this a liability, not an asset.
-- `team-hub`'s Prisma schema — a meeting brief does not need a database for a 6-day build.
+- `team-hub`'s Prisma schema — no ORM: the action store is one Neon Postgres table in
+  `src/lib/action-store.ts`, with an in-memory fallback, and a meeting brief needs nothing more.
 
 ---
 
@@ -166,7 +167,7 @@ plan a beta build for the 5-minute lock test.
 | **Commitment awareness** | The brief leads with what you owe, not what was said | Every competitor summarises; nobody surfaces obligations |
 | **Follow-up radar** | The same detector runs across every meeting | Useful *between* meetings, not only nine minutes before one |
 | **Measured-hardware discipline** | Every input rule cites a finding ID and has a test | Most entries are built on the docs alone; the docs are wrong about lock behaviour (H15) |
-| **Pure tested core** | 171 tests, 1.2 s, no SDK/DOM/network | The state machine is provable, not click-tested |
+| **Pure tested core** | 263 tests, no SDK/DOM/network | The state machine is provable, not click-tested |
 | **Honest demo mode** | No token → fixtures, header says `demo` | Borrowed from `lightnoteaiiii`'s "never silently change provider" |
 | **One codebase, two targets** | Next.js serves the dashboard + API **and** exports the plugin | Competitors have a plugin or a backend, rarely both from one tree |
 | **Firmware rules pinned by tests** | one capture container, unique z-order, ≤999 bytes, canvas bounds | The SDK validates at runtime; we fail at test time |

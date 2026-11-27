@@ -118,7 +118,7 @@ Hard limits, each enforced by a test:
 |---|---|---|
 | Usefulness on G2 | 30% | The organizers' own named moment, daily and recurring, hands-free |
 | Read and write | 25% | One tap → real side effect → receipt with the delivered string and provider reference |
-| Technical execution | 20% | Pure tested core (171 tests), real backend, firmware rules pinned, deterministic gate |
+| Technical execution | 20% | Pure tested core (263 tests), real backend, firmware rules pinned, deterministic gate |
 | UX for display and voice | 15% | Three bands, one cursor, four gestures, voice never auto-commits |
 | Business & safety | 10% | Token-only auth, no funds, no analytics, one whitelisted origin |
 
@@ -148,7 +148,9 @@ Track 04 has ~6 builds. Track 01 has ~30 near-identical Telegram triage apps.
 - **No trading.** 18 near-identical HUDs, and money-safety rules add risk for zero differentiation.
 - **No camera, no speaker.** The hardware has neither.
 - **No dashboard on the lens.** One decision per screen.
-- **No database.** A 6-day build does not need one; the in-memory store has the same shape as a table.
+- **No general database.** Only the action store is persisted — one Neon Postgres table when
+  `DATABASE_URL` is set, with an in-memory fallback. Briefs, meetings and memory are computed, so
+  nothing else needs a schema.
 - **No auth.** The hackathon demo is single-user. OAuth is designed for (device flow) but not wired.
 - **No queue.** Actions are synchronous and idempotent; a queue would add a failure mode without
   removing one.
@@ -158,8 +160,7 @@ Track 04 has ~6 builds. Track 01 has ~30 near-identical Telegram triage apps.
 
 | Deferred | Why | Upgrade path |
 |---|---|---|
-| Live Notion/Calendar **read** | Needs a database id and a property mapping; a half-mapped one is worse than an honest demo | `getMeetings()` in `src/lib/meetings.ts` is the single seam |
-| Postgres | In-memory store has the same shape | Swap `actions` Map in `src/lib/execute.ts` |
+| Live **Calendar** read | No Google Calendar adapter yet; a half-mapped one is worse than an honest demo | `getMeetings()` in `src/lib/meetings.ts` is the single seam |
 | OAuth | Single-user demo | Google device-authorization flow (no WebView OAuth) |
 | Real font metrics | `CHAR_ADVANCE_PX = 8.6` is an estimate | `@evenrealities/pretext` via `@maticsh/glasses` |
 | Commitment false-positive tuning | Unmeasured on real threads | Run over 50 real threads, tune the patterns |

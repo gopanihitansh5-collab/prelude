@@ -27,7 +27,7 @@ Set the browser zoom so the lens is exactly 576×288 on screen.
 
 ### Pre-flight checklist
 
-- [ ] `npm run gate` passes (typecheck, 171 tests, manifest, both builds)
+- [ ] `npm run gate` passes (typecheck, 263 tests, manifest, both builds)
 - [ ] `/api/health` returns `{"ok":true,"mode":"demo"}` or `"live"`
 - [ ] The lens renders the brief, not `loading…`
 - [ ] The external service is logged in and visible
@@ -147,8 +147,8 @@ OPEN: Architecture doc
 | "How do you know the tap did something?" | "The receipt is built from the provider's response, not from the model's proposal. The delivered string is the record's text." |
 | "What about long press?" | "We don't depend on it. Users can bind it to Even AI, so voice is also in the contextual menu." |
 | "Does it work with the phone locked?" | "That's the beta-build test. Local sideload is not representative — we test the shipped build." |
-| "How many tests?" | "171, in 1.2 seconds, with no SDK, no browser and no network." |
-| "What's not built?" | "Live calendar read is stubbed, there's no database and no auth. The write path is real; the read path is fixtures. It's in the README." |
+| "How many tests?" | "263, in a few seconds, with no SDK, no browser and no network." |
+| "What's not built?" | "Google Calendar read and auth. Notion read is wired when a token is set; with none the read path is fixtures. Action history is Neon Postgres when `DATABASE_URL` is set, in-memory otherwise. It's in the README." |
 
 ---
 
