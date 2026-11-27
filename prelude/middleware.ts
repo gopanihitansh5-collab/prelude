@@ -26,10 +26,26 @@ const ALLOWED_ORIGINS = [
   'https://hub.evenrealities.com',
 ]
 
+/**
+ * The CORS answer for one request.
+ *
+ * The subtle part is the packaged plugin. Its origin is opaque, and a browser
+ * serialises an opaque origin as the string `null` — but Chrome does **not**
+ * accept `Access-Control-Allow-Origin: null` for a document with an opaque
+ * origin, so a .ehpk loaded from a file path had every API call fail with
+ * "Failed to fetch" while the same server answered a normal origin correctly.
+ * The Fetch spec's matching rule is the trap: `null` is not a wildcard.
+ *
+ * `*` IS accepted for opaque origins, and it is safe here because nothing is
+ * authenticated by the origin: there are no cookies and no credentials on these
+ * routes. The write path is gated by a shared secret header (`requireActKey`),
+ * and the read paths expose only demo data.
+ */
 function corsHeaders(origin: string | null): Record<string, string> {
-  const allow = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
+  const known = origin !== null && ALLOWED_ORIGINS.includes(origin) && origin !== 'null'
+  const allow = known ? origin : '*'
   return {
-    'Access-Control-Allow-Origin': allow ?? 'null',
+    'Access-Control-Allow-Origin': allow ?? '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, x-prelude-key',
     'Access-Control-Max-Age': '86400',
