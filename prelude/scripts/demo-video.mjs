@@ -50,16 +50,16 @@ const SCENES = [
   {
     id: 'problem',
     url: '/',
-    seconds: 22.4,
+    seconds: 25.5,
     caption: "It's 09:51 and the meeting is in nine minutes.",
     act: async (page, ms) => {
-      await slowScroll(page, 0, 0.42, ms)
+      await slowScroll(page, 0, 0.26, ms)
     },
   },
   {
     id: 'brief',
     url: '/lens',
-    seconds: 24.7,
+    seconds: 29.6,
     caption: 'One glance: who, what, and what I owe.',
     act: async (page, ms) => {
       await page.waitForTimeout(Math.min(1200, ms))
@@ -70,7 +70,7 @@ const SCENES = [
   {
     id: 'memory',
     url: '/memory',
-    seconds: 14.2,
+    seconds: 17.9,
     caption: 'Memory answers with the source and the timestamp.',
     act: async (page, ms) => {
       await slowScroll(page, 0, 0.25, ms)
@@ -79,7 +79,7 @@ const SCENES = [
   {
     id: 'action',
     url: '/lens',
-    seconds: 6.7,
+    seconds: 10.8,
     caption: 'One tap to act — no dictation, no keyboard.',
     act: async (page, ms) => {
       const tap = page.getByRole('button', { name: /● tap/ })
@@ -92,7 +92,7 @@ const SCENES = [
   {
     id: 'write',
     url: '/actions',
-    seconds: 8.3,
+    seconds: 11,
     caption: 'The token lives on the server, never on the glasses.',
     act: async (page, ms) => {
       await slowScroll(page, 0, 0.22, ms)
@@ -101,7 +101,7 @@ const SCENES = [
   {
     id: 'receipt',
     url: '/actions',
-    seconds: 25.6,
+    seconds: 32.6,
     caption: 'SENT — the exact string the server delivered.',
     act: async (page, ms) => {
       await slowScroll(page, 0.22, 0.6, Math.min(ms, 9000))
@@ -111,7 +111,7 @@ const SCENES = [
   {
     id: 'radar',
     url: '/followups',
-    seconds: 8.7,
+    seconds: 11.7,
     caption: 'Open commitments, tracked across every meeting.',
     act: async (page, ms) => {
       await slowScroll(page, 0, 0.3, ms)
@@ -305,8 +305,8 @@ const filter = [
   `[1:v]trim=0:${targetSeconds.toFixed(2)},setpts=PTS-STARTPTS,scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2:color=0x050807,setsar=1,fps=30[v]`,
   `[0:v]scale=${W}:${H},setsar=1,fps=30[t0]`,
   `[2:v]scale=${W}:${H},setsar=1,fps=30[t1]`,
-  `[t0][v][t1]concat=n=3:v=1:a=0,drawbox=x=0:y=${H - 250}:w=${W}:h=250:color=0x040706@0.88:t=fill[band]`,
-  `[band]subtitles='${captions.replace(/\\/g, '/').replace(':', '\\:')}':force_style='FontName=Arial,FontSize=27,Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&HC0000000,BorderStyle=1,Outline=2.2,Shadow=1,MarginV=52'[sub]`,
+  `[t0][v][t1]concat=n=3:v=1:a=0,drawbox=x=0:y=${H - 150}:w=${W}:h=150:color=0x040706@0.80:t=fill[band]`,
+  `[band]subtitles='${captions.replace(/\\/g, '/').replace(':', '\\:')}':force_style='FontName=Arial,FontSize=19,Bold=1,PrimaryColour=&H00F2F7F4,OutlineColour=&HAA000000,BorderStyle=1,Outline=1.2,Shadow=1,MarginV=34'[sub]`,
   `[sub]fade=t=in:st=0:d=0.5,fade=t=out:st=${(totalSeconds - 0.6).toFixed(2)}:d=0.6[vout]`,
 ].join(';')
 

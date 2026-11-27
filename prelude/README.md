@@ -384,6 +384,8 @@ which parts are live and which are not. That is the difference between a demo an
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — module boundaries and the invariants each protects
 - [DECISIONS.md](./DECISIONS.md) — every non-obvious choice, with a **revisit-if** condition
 - [DEMO.md](./DEMO.md) — the 3-minute demo script
+- [docs/demo.mp4](./docs/demo.mp4) — the rendered demo, narrated and captioned
+- [docs/VERIFICATION.md](./docs/VERIFICATION.md) — every check with evidence (`npm run verify`)
 
 ## Licence
 

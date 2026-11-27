@@ -1,21 +1,22 @@
 # DEMO — shot list with narration
 
-A 1:50 cut, timed to [demo-voiceover.mp3](./demo-voiceover.mp3) — narration rendered with ElevenLabs, one clip per
-scene, and verified by transcribing the finished track back to text. Every cue lands on the frame it describes, so
-you can record the screen once and lay the audio underneath. The rubric this is built for:
+A 2:29 cut. [demo.mp4](./demo.mp4) is already rendered — **this file exists so the video can be re-cut**, not because you
+need to assemble it. Narration is `en-IN-PrabhatNeural` (Indian English, male) at +2% rate, one clip per scene, and
+every cue below lands on the frame it describes. The picture is Playwright driving the deployed app; ffmpeg adds the
+title card, captions, narration and end card. The rubric this is built for:
 **usefulness 30% · read & write 25% · technical 20% · UX 15% · business 10%** — the time is spent in that order,
 and the receipt gets the last word.
 
 | Time | Scene | What is on screen | What is heard |
 |---|---|---|---|
-| 0:00.0 – 0:22.4 | The cost | Phone: unlock → calendar → thread → doc → start typing. Do not hurry it; the cost is the point. | "It is 09:51. My next meeting is in nine minutes… five context switches before I even start typing." |
-| 0:22.8 – 0:47.5 | The card | The lens, at exactly 576×288. Hold on the brief. | "This is Prelude, on Even Realities G2. One card…" |
-| 0:48.0 – 1:02.2 | The commitment | Point at `OPEN: revised enterprise pricing`. | "That is not a summary. The app read a message where I said I would send revised pricing by Wednesday…" |
-| 1:02.6 – 1:09.3 | Memory | Swipe to memory. `YES · 3 matches`, source and timestamp. | "Have we discussed pricing before? Yes…" |
-| 1:09.7 – 1:18.0 | The action | Tap → actions list → tap *Reply: running 5 late*. | "One tap to act. Reply, prep note, or open the agenda…" |
-| 1:18.5 – 1:44.1 | The write | The backend call; the provider target. The token never touches the device. | "The reply goes out through the server, not from the glasses…" |
-| 1:44.5 – 1:50.5 | **The receipt** | Back to the lens: `SENT · 12:04`, the exact delivered string. Then the actions page with the provider reference. **Hold this frame.** | "Sent, at twelve oh four, carrying the exact string the server delivered… a retry returns that receipt instead of sending twice… never a blind retry." |
-| 1:50.5 – end | Optional | Follow-up radar: `3 OPEN COMMITMENTS · 1 OVERDUE`. | (covered by the last clip, 1:44.5–1:50.5) |
+| 0:02.5 – 0:28.0 | The cost | Landing page, slow scroll. Do not hurry it; the cost is the point. | "Nine fifty-one. My next meeting is in nine minutes… five context switches, before I even start typing." |
+| 0:28.4 – 0:58.0 | The card | The lens at exactly 576×288. Hold on the brief. | "This is Prelude, on Even Realities G2. One card…" |
+| 0:58.4 – 1:16.3 | The commitment | Point at `OPEN: revised enterprise pricing`. | "The app read a message where I said I would send the revised pricing by Wednesday…" |
+| 1:16.6 – 1:27.4 | Memory | Swipe to memory. `YES · 3 matches`, source and timestamp. | "Have we discussed pricing before? Yes…" |
+| 1:27.8 – 1:38.8 | The action | Tap → actions list → tap *Reply: running 5 late*. | "One tap to act. Reply. Prep note. Or open the agenda…" |
+| 1:39.2 – 2:11.8 | The write | The actions page: the record and the provider reference. | "The reply goes out through the server, not from the glasses…" |
+| 2:12.2 – 2:25.0 | **The receipt** | `SENT · 12:04` — the exact delivered string. **Hold this frame.** | "Sent, at twelve oh four, carrying the exact string the server delivered… never a blind retry." |
+| 2:25.0 – 2:29.0 | End card | Tagline, URL, repo, test count. | (music of the last clip tails off) |
 
 ## How to record it
 
