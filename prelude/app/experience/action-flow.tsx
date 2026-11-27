@@ -13,7 +13,7 @@
 // makes it a receipt rather than a send.
 
 import { useEffect, useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -33,10 +33,31 @@ const STOPS = [
   { id: 'receipt', label: 'RECEIPT', x: 3.1 },
 ] as const
 
+/** Half the width the rail covers, in world units. */
+const HALF_SPAN = STOPS[STOPS.length - 1]!.x
+
+/**
+ * World units reserved on each side for the outer labels ("G2", "RECEIPT").
+ *
+ * The labels are DOM `<Html>`, so a stop that sits at the edge of the camera's
+ * visible width pushes its label past the viewport — the row of stops clips and
+ * the page hides the overflow, which silently cuts the word "RECEIPT" in half.
+ * That is what happened at 390px and 320px wide.
+ */
+const LABEL_MARGIN = 0.95
+
 export function ActionFlow({ progress, stage, pointer }: FlowProps) {
   const groupRef = useRef<THREE.Group>(null)
   const packetRef = useRef<THREE.Mesh>(null)
   const trailRef = useRef<THREE.Mesh>(null)
+  const { viewport } = useThree()
+
+  // Frame the whole rail inside the canvas, whatever the canvas aspect is. The
+  // scene is decorative, so shrinking it on a phone is better than clipping it.
+  const fit = useMemo(() => {
+    const room = viewport.width / 2 - LABEL_MARGIN
+    return Math.min(1, Math.max(0.4, room / HALF_SPAN))
+  }, [viewport.width])
 
   const verified = stage === 'verified'
   const color = verified ? '#7dffa8' : '#ffc46b'
@@ -94,7 +115,7 @@ export function ActionFlow({ progress, stage, pointer }: FlowProps) {
   useEffect(() => () => railGeometry.dispose(), [railGeometry])
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} scale={[fit, fit, fit]}>
       {/* the rail */}
       <lineSegments geometry={railGeometry}>
         <lineBasicMaterial color="#2a3a32" transparent opacity={0.9} />

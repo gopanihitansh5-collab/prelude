@@ -10,11 +10,17 @@
 // one not built is `planned`. The visual difference is real, not decorative.
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 
 export type ProviderState = 'live' | 'ready' | 'planned'
+
+/** The orbit every provider sits on. Kept here so the fit below cannot drift. */
+const ORBIT_X = 2.35
+const ORBIT_Y = 0.62
+/** World units kept clear at each edge for the widest label ("Documents"). */
+const LABEL_MARGIN = 0.8
 
 export interface Provider {
   id: string
@@ -54,8 +60,7 @@ function ProviderNode({
 
   const position = useMemo(() => {
     const angle = (index / total) * Math.PI * 2
-    const radius = 2.35
-    return new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius * 0.62, 0)
+    return new THREE.Vector3(Math.cos(angle) * ORBIT_X, Math.sin(angle) * ORBIT_X * ORBIT_Y, 0)
   }, [index, total])
 
   useFrame((state) => {
@@ -125,12 +130,20 @@ export function Ecosystem({ providers, pointer }: EcosystemProps) {
   const groupRef = useRef<THREE.Group>(null)
   const coreRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState<Provider | null>(null)
+  const { viewport, size } = useThree()
+
+  // Nodes and their labels are DOM overlays; on a narrow canvas the ring at
+  // ±ORBIT_X would push "Documents" past the edge and the page would clip it.
+  const fit = useMemo(() => {
+    const room = viewport.width / 2 - LABEL_MARGIN
+    return Math.min(1, Math.max(0.45, room / ORBIT_X))
+  }, [viewport.width])
 
   const spokes = useMemo(() => {
     const points: number[] = []
     providers.forEach((_, index) => {
       const angle = (index / providers.length) * Math.PI * 2
-      points.push(0, 0, 0, Math.cos(angle) * 2.35, Math.sin(angle) * 2.35 * 0.62, 0)
+      points.push(0, 0, 0, Math.cos(angle) * ORBIT_X, Math.sin(angle) * ORBIT_X * ORBIT_Y, 0)
     })
     return new Float32Array(points)
   }, [providers])
@@ -157,7 +170,7 @@ export function Ecosystem({ providers, pointer }: EcosystemProps) {
   useEffect(() => () => spokeGeometry.dispose(), [spokeGeometry])
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} scale={[fit, fit, fit]}>
       {/* the core */}
       <mesh ref={coreRef}>
         <icosahedronGeometry args={[0.42, 1]} />
@@ -187,7 +200,7 @@ export function Ecosystem({ providers, pointer }: EcosystemProps) {
         <Html position={[0, -2.35, 0]} center distanceFactor={10}>
           <div
             style={{
-              minWidth: 280,
+              minWidth: Math.min(280, Math.max(180, size.width - 64)),
               padding: '14px 16px',
               borderRadius: 12,
               border: `1px solid ${STATE_COLOR[hovered.state]}44`,

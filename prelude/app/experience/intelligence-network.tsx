@@ -41,18 +41,25 @@ interface NetworkProps {
   pointer: { x: number; y: number }
 }
 
+/** The sphere the nodes sit on, before the canvas-width fit is applied. */
+const NODE_SPHERE = 2.5
+/** World units kept clear at each edge for the widest label. */
+const LABEL_MARGIN = 0.55
+
 function Node({
   node,
   index,
   total,
   progress,
   onHover,
+  labelPx,
 }: {
   node: GraphNode
   index: number
   total: number
   progress: number
   onHover: (node: GraphNode | null) => void
+  labelPx: number
 }) {
   const meshRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
@@ -63,7 +70,7 @@ function Node({
     const y = 1 - (index / (total - 1)) * 2
     const radius = Math.sqrt(Math.max(0, 1 - y * y))
     const theta = golden * index
-    const scale = 2.5
+    const scale = NODE_SPHERE
     return new THREE.Vector3(
       Math.cos(theta) * radius * scale,
       y * scale * 0.72,
@@ -118,7 +125,7 @@ function Node({
         <span
           style={{
             fontFamily: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace',
-            fontSize: 11,
+            fontSize: labelPx,
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
             color: hovered ? '#f0f5f2' : node.color,
@@ -139,6 +146,19 @@ export function IntelligenceNetwork({ progress, pointer }: NetworkProps) {
   const groupRef = useRef<THREE.Group>(null)
   const coreRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState<GraphNode | null>(null)
+  const { viewport, size } = useThree()
+
+  // The nodes are on a sphere and the sphere spins, so a node swings to ±radius
+  // and, being nearer the camera, projects even wider than that. On a narrow
+  // canvas the rim labels then bleed past the viewport and the page clips them.
+  // Shrink the sphere to the canvas, and shrink the labels with it: they are
+  // fixed-size DOM, so the font has to come down too.
+  const fit = useMemo(() => {
+    const room = viewport.width / 2 - LABEL_MARGIN
+    return Math.min(1, Math.max(0.55, room / NODE_SPHERE))
+  }, [viewport.width])
+
+  const labelPx = Math.min(11, Math.max(8, size.width / 34))
 
   // Precompute the edges: every node to the core, plus a few cross-links so it
   // reads as a graph rather than a star.
@@ -192,7 +212,7 @@ export function IntelligenceNetwork({ progress, pointer }: NetworkProps) {
   useEffect(() => () => edgeGeometry.dispose(), [edgeGeometry])
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} scale={[fit, fit, fit]}>
       {/* the core */}
       <mesh ref={coreRef}>
         <icosahedronGeometry args={[0.34, 1]} />
@@ -224,6 +244,7 @@ export function IntelligenceNetwork({ progress, pointer }: NetworkProps) {
           total={GRAPH_NODES.length}
           progress={progress}
           onHover={setHovered}
+          labelPx={labelPx}
         />
       ))}
 
@@ -232,7 +253,7 @@ export function IntelligenceNetwork({ progress, pointer }: NetworkProps) {
         <Html position={[0, -2.6, 0]} center distanceFactor={10}>
           <div
             style={{
-              minWidth: 260,
+              minWidth: Math.min(260, Math.max(180, size.width - 64)),
               padding: '14px 16px',
               borderRadius: 12,
               border: '1px solid rgba(125,255,168,0.28)',

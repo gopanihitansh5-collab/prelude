@@ -151,6 +151,11 @@
      knowledge graph and the ecosystem can never fire. Text sits above it in
      .chapter-inner, so it stays selectable. */
   pointer-events: auto;
+  /* drei renders scene labels as DOM, so a node near the edge could bleed past
+     the chapter box. Clip here: the scene is decorative, and a clipped label is
+     better than a horizontally scrolling page. The scenes also fit themselves
+     to the canvas width, so in practice nothing is cut. */
+  overflow: hidden;
 }
 
 .stage canvas {

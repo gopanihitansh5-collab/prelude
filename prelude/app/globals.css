@@ -122,7 +122,11 @@ pre,
 
 .nav {
   display: flex;
-  gap: 16px;
+  /* Seven links do not fit on one line on a phone; without wrapping the nav
+     widens the layout viewport and the whole dashboard becomes a page that
+     scrolls sideways. */
+  flex-wrap: wrap;
+  gap: 8px 16px;
   font-size: 13px;
 }
 
@@ -150,6 +154,21 @@ pre,
     max-width: 576px;
     height: auto;
     aspect-ratio: 2 / 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding: 20px 14px 48px;
+  }
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .nav {
+    gap: 8px 12px;
+    font-size: 12px;
   }
 }
 
